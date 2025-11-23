@@ -442,7 +442,7 @@
 
   let currentUser   = null;
   let globalWeightsCache = {
-    "ปลา":100,"ปู":100,"กุ้ง":100,"เต่า":100,"ไก่":100,"น้ำเต้า":100
+    "ปลา":100,"ปู":100,"กุ้ง":100,"เสือ":100,"ไก่":100,"น้ำเต้า":100
   };
 
   let tablesArray   = []; // [{id,data,lastMs,isRecent,owner,rounds,status,hasOverride}]
@@ -518,7 +518,7 @@
     gFish.value    = safe(weights["ปลา"],    100);
     gCrab.value    = safe(weights["ปู"],     100);
     gShrimp.value  = safe(weights["กุ้ง"],    100);
-    gTurtle.value  = safe(weights["เต่า"],   100);
+    gTurtle.value  = safe(weights["เสือ"],   100);
     gChicken.value = safe(weights["ไก่"],    100);
     gGourd.value   = safe(weights["น้ำเต้า"], 100);
 
@@ -530,7 +530,7 @@
       "ปลา":   Number(gFish.value),
       "ปู":    Number(gCrab.value),
       "กุ้ง":   Number(gShrimp.value),
-      "เต่า":  Number(gTurtle.value),
+      "เสือ":  Number(gTurtle.value),
       "ไก่":   Number(gChicken.value),
       "น้ำเต้า": Number(gGourd.value)
     };
@@ -553,7 +553,7 @@
         "ปลา":    valOr(gFish),
         "ปู":     valOr(gCrab),
         "กุ้ง":    valOr(gShrimp),
-        "เต่า":   valOr(gTurtle),
+        "เสือ":   valOr(gTurtle),
         "ไก่":    valOr(gChicken),
         "น้ำเต้า": valOr(gGourd)
       },
@@ -617,7 +617,7 @@
       tFish.value    = safe(tw["ปลา"],    globalWeightsCache["ปลา"]);
       tCrab.value    = safe(tw["ปู"],     globalWeightsCache["ปู"]);
       tShrimp.value  = safe(tw["กุ้ง"],    globalWeightsCache["กุ้ง"]);
-      tTurtle.value  = safe(tw["เต่า"],   globalWeightsCache["เต่า"]);
+      tTurtle.value  = safe(tw["เสือ"],   globalWeightsCache["เสือ"]);
       tChicken.value = safe(tw["ไก่"],    globalWeightsCache["ไก่"]);
       tGourd.value   = safe(tw["น้ำเต้า"], globalWeightsCache["น้ำเต้า"]);
       tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ค่า override ของตัวเองอยู่";
@@ -625,7 +625,7 @@
       tFish.value    = globalWeightsCache["ปลา"];
       tCrab.value    = globalWeightsCache["ปู"];
       tShrimp.value  = globalWeightsCache["กุ้ง"];
-      tTurtle.value  = globalWeightsCache["เต่า"];
+      tTurtle.value  = globalWeightsCache["เสือ"];
       tChicken.value = globalWeightsCache["ไก่"];
       tGourd.value   = globalWeightsCache["น้ำเต้า"];
       tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ Global default • หากกดบันทึกจะสร้าง override ใหม่";
@@ -655,7 +655,7 @@
         "ปลา":    valOr(tFish),
         "ปู":     valOr(tCrab),
         "กุ้ง":    valOr(tShrimp),
-        "เต่า":   valOr(tTurtle),
+        "เสือ":   valOr(tTurtle),
         "ไก่":    valOr(tChicken),
         "น้ำเต้า": valOr(tGourd)
       },
