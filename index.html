@@ -32,22 +32,22 @@
   }
   header{
     text-align:center;
-    padding:28px 16px 10px;
+    padding:26px 16px 10px;
     animation:fadeDown 1s ease forwards;
   }
   header h1{
     margin:0;
-    font-size:32px;
-    letter-spacing:1.5px;
+    font-size:34px;
+    letter-spacing:1.6px;
     text-shadow:0 0 18px #0ea5e9;
   }
   header p{
     margin:6px 0 0;
     color:var(--text-sub);
-    font-size:14px;
+    font-size:13px;
   }
   .wrapper{
-    max-width:1080px;
+    max-width:1120px;
     margin:0 auto 40px;
     padding:0 16px 32px;
   }
@@ -82,10 +82,10 @@
 
   .card{
     background:var(--card-bg);
-    border-radius:24px;
+    border-radius:26px;
     border:1px solid var(--border-soft);
-    padding:20px 16px 22px;
-    box-shadow:0 18px 40px rgba(15,23,42,0.9);
+    padding:22px 18px 24px;
+    box-shadow:0 20px 45px rgba(15,23,42,0.95);
     position:relative;
     overflow:hidden;
   }
@@ -93,38 +93,40 @@
     content:"";
     position:absolute;
     inset:-120px;
-    background:radial-gradient(circle at top,var(--accent-soft) 0,transparent 55%);
-    opacity:0.08;
+    background:
+      radial-gradient(circle at top,var(--accent-soft) 0,transparent 55%),
+      radial-gradient(circle at bottom,var(--accent-2) 0,transparent 60%);
+    opacity:0.12;
     pointer-events:none;
   }
 
   .top-row{
     display:flex;
     flex-wrap:wrap;
-    gap:16px;
-    align-items:flex-start;
+    gap:18px;
+    align-items:center;
     justify-content:center;
   }
 
-  /* Bowl / Lid */
+  /* ===== Bowl / Lid / Dice (ขยายให้เด่นขึ้น) ===== */
   .bowl-wrap{
-    flex:0 1 320px;
+    flex:0 1 360px;
     display:flex;
     justify-content:center;
   }
   .bowl{
     position:relative;
-    width:260px;
-    height:260px;
-    perspective:900px;
+    width:320px;
+    height:320px;
+    perspective:1000px;
   }
   .bowl-base{
     position:absolute;
-    inset:40px 24px 12px;
+    inset:52px 30px 18px;
     border-radius:50% 50% 40% 40%;
     background:radial-gradient(circle at 30% 15%,#1e293b 0,#020617 60%);
     box-shadow:
-      0 18px 45px rgba(0,0,0,0.9),
+      0 22px 55px rgba(0,0,0,0.95),
       0 0 0 1px rgba(148,163,184,0.25);
     display:flex;
     align-items:center;
@@ -134,36 +136,36 @@
     transition:opacity .25s ease;
     opacity:1;
   }
-  /* ตอนฝาปิด ให้ลูกเต๋าหายไป */
+  /* ตอนฝาปิด ให้ผู้เล่นมองไม่เห็นลูกเต๋า */
   .bowl.bowl--closed .bowl-base{
     opacity:0;
   }
 
   .bowl-lid{
     position:absolute;
-    inset:8px 28px auto;
-    height:120px;
-    border-radius:48% 48% 42% 42%;
-    background:linear-gradient(145deg,#0f172a,#1f2937);
+    inset:10px 34px auto;
+    height:150px;
+    border-radius:50% 50% 44% 44%;
+    background:linear-gradient(145deg,#020617,#1f2937);
     box-shadow:
-      0 14px 30px rgba(0,0,0,0.9),
-      0 0 0 1px rgba(148,163,184,0.4);
+      0 16px 34px rgba(0,0,0,0.95),
+      0 0 0 1px rgba(148,163,184,0.45);
     transform-origin:center bottom;
-    transform:translateY(-76px) rotateX(26deg);
+    transform:translateY(-90px) rotateX(26deg);
     transition:transform .5s ease;
     z-index:2;
   }
   .bowl-lid::before{
     content:"";
     position:absolute;
-    width:48px;
-    height:14px;
-    border-radius:999px 999px 8px 8px;
+    width:56px;
+    height:16px;
+    border-radius:999px 999px 10px 10px;
     background:linear-gradient(135deg,#22d3ee,#a855f7);
-    top:-10px;
+    top:-12px;
     left:50%;
     transform:translateX(-50%);
-    box-shadow:0 0 16px rgba(34,211,238,0.7);
+    box-shadow:0 0 20px rgba(34,211,238,0.8);
   }
   .bowl.bowl--closed .bowl-lid{
     transform:translateY(0) rotateX(0deg);
@@ -177,28 +179,28 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:8px;
+    gap:10px;
   }
-  .dice-strip{display:flex;gap:8px;}
+  .dice-strip{display:flex;gap:10px;}
   .die{
-    width:62px;
-    height:62px;
-    border-radius:18px;
+    width:76px;
+    height:76px;
+    border-radius:22px;
     background:radial-gradient(circle at 25% 20%,#1f2937 0,#020617 70%);
-    border:1px solid rgba(148,163,184,0.6);
+    border:1px solid rgba(148,163,184,0.7);
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
     box-shadow:
-      0 8px 18px rgba(0,0,0,0.9),
-      0 0 0 1px rgba(15,23,42,0.8);
-    transform:translateZ(20px);
+      0 10px 22px rgba(0,0,0,0.95),
+      0 0 0 1px rgba(15,23,42,0.9);
+    transform:translateZ(24px);
   }
-  .die-emoji{font-size:26px;}
+  .die-emoji{font-size:30px;}
   .die-label{
-    font-size:11px;
-    margin-top:3px;
+    font-size:12px;
+    margin-top:4px;
     color:var(--text-sub);
   }
 
@@ -210,39 +212,47 @@
     color:var(--text-sub);
   }
 
+  /* ===== Control panel / ปุ่มเด่นขึ้น ===== */
   .control-panel{
-    flex:1 1 280px;
-    min-width:260px;
+    flex:1 1 320px;
+    min-width:280px;
   }
   .control-panel h2{
-    margin:0 0 6px;
-    font-size:20px;
+    margin:0 0 8px;
+    font-size:22px;
   }
   .control-panel p{
-    margin:0 0 10px;
+    margin:0 0 12px;
     color:var(--text-sub);
     font-size:13px;
   }
 
   .btn-main{
     margin-top:14px;
-    padding:11px 18px;
+    padding:14px 24px;
     border-radius:999px;
     border:none;
-    font-size:14px;
-    font-weight:600;
+    font-size:15px;
+    font-weight:700;
     cursor:pointer;
-    background:linear-gradient(135deg,#22d3ee,#a855f7);
-    color:#0b1120;
+    background:radial-gradient(circle at 0 0,#a855f7 0,#22d3ee 40%,#0ea5e9 70%);
+    color:#020617;
     display:inline-flex;
     align-items:center;
-    gap:8px;
-    box-shadow:0 0 20px rgba(34,211,238,0.6);
-    transition:.2s;
+    gap:10px;
+    box-shadow:
+      0 0 26px rgba(34,211,238,0.85),
+      0 0 40px rgba(168,85,247,0.6);
+    transition:.18s;
+  }
+  .btn-main span:first-child{
+    letter-spacing:0.2px;
   }
   .btn-main:hover{
-    transform:translateY(-1px) scale(1.02);
-    box-shadow:0 0 26px rgba(34,211,238,0.8);
+    transform:translateY(-1px) scale(1.03);
+    box-shadow:
+      0 0 32px rgba(34,211,238,0.95),
+      0 0 46px rgba(168,85,247,0.75);
   }
   .btn-main[disabled]{
     opacity:.55;
@@ -253,10 +263,10 @@
   .small-text{
     font-size:11px;
     color:var(--text-sub);
-    margin-top:6px;
+    margin-top:8px;
   }
   .last-result{
-    margin-top:10px;
+    margin-top:12px;
     font-size:13px;
     color:var(--text-sub);
   }
@@ -264,7 +274,7 @@
     display:flex;
     flex-wrap:wrap;
     gap:6px;
-    margin-top:6px;
+    margin-top:8px;
   }
   .tag{
     font-size:11px;
@@ -274,6 +284,7 @@
     border:1px solid rgba(148,163,184,0.3);
   }
 
+  /* ===== History / Stats ===== */
   .history-layout{
     display:flex;
     flex-wrap:wrap;
@@ -376,10 +387,12 @@
     100%{transform:translate(0,0) rotate(0);}
   }
 
-  @media (max-width:640px){
-    .bowl{width:220px;height:220px;}
-    .bowl-base{inset:34px 20px 10px;}
-    .bowl-lid{inset:6px 24px auto;height:110px;}
+  @media (max-width:768px){
+    .bowl-wrap{flex-basis:100%;}
+    .bowl{width:260px;height:260px;}
+    .bowl-base{inset:44px 26px 14px;}
+    .bowl-lid{inset:8px 30px auto;height:132px;}
+    .die{width:70px;height:70px;}
   }
 </style>
 </head>
@@ -387,7 +400,7 @@
 
 <header>
   <h1>น้ำเต้าปูปลา PHANToM</h1>
-  <p>ปิดฝา & เขย่า 3 วินาที • สุ่มแบบ Perfect Random • เปิดฝาเมื่อไหร่โชว์ผลเมื่อนั้น</p>
+  <p>ปิดฝา & เขย่า 3 วินาที • สุ่มต่อเนื่องขณะฝาปิด • เปิดฝาเมื่อไหร่โชว์ผลเมื่อนั้น</p>
 </header>
 
 <div class="wrapper">
@@ -432,8 +445,8 @@
         <div class="control-panel">
           <h2>สองจังหวะ: ปิดฝาเขย่า → เปิดฝาโชว์ผล</h2>
           <p>
-            กดครั้งแรก: ฝาปิด + เขย่า 3 วินาที แล้วหยุดเขย่า แต่ยังปิดฝา<br>
-            ขณะที่ฝาปิด สามารถลงเดิมพันได้เรื่อยๆ จนกว่าคุณจะกดเปิดฝา
+            กดครั้งแรก: ฝาปิด + เขย่า 3 วินาที (ขณะฝาปิดระบบจะสุ่มต่อเนื่องตลอด)<br>
+            กดครั้งที่สอง: เปิดฝา & โชว์ผลล่าสุด พร้อมบันทึกลงประวัติ
           </p>
 
           <button class="btn-main" id="shake-btn">
@@ -441,7 +454,7 @@
           </button>
 
           <div class="small-text" id="mode-text">
-            ระบบกำลังสุ่ม...
+            ระบบกำลังโหลดค่าเปอร์เซ็นจาก Firebase...
           </div>
 
           <div class="last-result" id="last-result">
@@ -523,15 +536,15 @@
     serverTimestamp
   } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
-  // 👉 ใส่ config โปรเจกต์ Firebase ของคุณตรงนี้
+  // 🔥 Firebase ของคุณ
   const firebaseConfig = {
-  apiKey: "AIzaSyBpxF7PVDhULJcA6LbOe8YtVmpqo77R0GQ",
-  authDomain: "phantom-namtao.firebaseapp.com",
-  projectId: "phantom-namtao",
-  storageBucket: "phantom-namtao.firebasestorage.app",
-  messagingSenderId: "842060392458",
-  appId: "1:842060392458:web:e09bc5221ef8211f4957f3",
-  measurementId: "G-T0BXJGRX8X"
+    apiKey: "AIzaSyBpxF7PVDhULJcA6LbOe8YtVmpqo77R0GQ",
+    authDomain: "phantom-namtao.firebaseapp.com",
+    projectId: "phantom-namtao",
+    storageBucket: "phantom-namtao.firebasestorage.app",
+    messagingSenderId: "842060392458",
+    appId: "1:842060392458:web:e09bc5221ef8211f4957f3",
+    measurementId: "G-T0BXJGRX8X"
   };
 
   const app  = initializeApp(firebaseConfig);
@@ -541,7 +554,7 @@
 
   const SHAKE_DURATION_MS = 3000;
   const LID_CLOSE_MS      = 400;
-  const RANDOM_INTERVAL_MS= 100; // ความถี่ในการสุ่มตอนฝาปิด
+  const RANDOM_INTERVAL_MS= 100;
 
   const animals = [
     { key:"ปลา",    emoji:"🐟" },
@@ -600,7 +613,7 @@
     });
   });
 
-  // สร้าง tableId ผูกกับเครื่อง
+  // tableId ผูกกับเครื่อง
   let tableId = localStorage.getItem("phantom_namtao_table_id");
   if(!tableId){
     tableId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("table_" + Date.now());
@@ -885,7 +898,7 @@
           status: "active",
           ownerUid: user.uid,
           ownerEmail: user.email || null,
-          tableUseGlobal: true // เริ่มต้นให้ใช้ Global ก่อน
+          tableUseGlobal: true
         },
         { merge:true }
       );
@@ -954,7 +967,7 @@
       return;
     }
 
-    // จังหวะที่ 2: เปิดฝา + โชว์ผล (ใช้ค่าที่สุ่มล่าสุด) + บันทึกประวัติ
+    // จังหวะที่ 2: เปิดฝา + โชว์ผล + บันทึกประวัติ
     if(gamePhase === "closed_randomizing"){
       gamePhase = "idle";
 
@@ -989,12 +1002,11 @@
         renderStats();
         await recordRollToFirestore(faces);
 
-        // เตรียมค่าเริ่มต้นสำหรับรอบต่อไป
         pendingFaces = randomFaces3();
 
         shakeBtn.disabled = false;
         shakeBtn.innerHTML = `<span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>`;
-      }, 250); // ดีเลย์นิดหน่อยให้รู้สึกว่าฝากำลังเปิด
+      }, 250);
     }
   });
 
