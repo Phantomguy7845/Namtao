@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>น้ำเต้าปูปลา PHANToM</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #020617;
+    --card-bg: rgba(15,23,42,0.9);
+    --accent: #22d3ee;
+    --accent-soft: #0ea5e9;
+    --accent-2: #a855f7;
+    --border-soft: rgba(148,163,184,0.35);
+    --text-main: #e5e7eb;
+    --text-sub: #9ca3af;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:"Prompt",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+    background:
+      radial-gradient(circle at top,#1e293b 0,#020617 40%),
+      radial-gradient(circle at bottom,#0f172a 0,#020617 55%);
+    color:var(--text-main);
+    overflow-x:hidden;
+  }
+
+  header{
+    text-align:center;
+    padding:28px 16px 10px;
+    animation:fadeDown 1s ease forwards;
+  }
+  header h1{
+    margin:0;
+    font-size:32px;
+    letter-spacing:1.5px;
+    text-shadow:0 0 18px #0ea5e9;
+  }
+  header p{
+    margin:6px 0 0;
+    color:var(--text-sub);
+    font-size:14px;
+  }
+
+  .wrapper{
+    max-width:1080px;
+    margin:0 auto 40px;
+    padding:0 16px 32px;
+  }
+
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:10px 0 22px;
+  }
+
+  .tab-btn{
+    border-radius:999px;
+    border:1px solid transparent;
+    padding:8px 18px;
+    font-size:14px;
+    cursor:pointer;
+    background:rgba(15,23,42,0.9);
+    color:var(--text-sub);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:.2s;
+  }
+  .tab-btn span.icon{font-size:16px;}
+  .tab-btn.active{
+    border-color:var(--accent);
+    color:var(--accent);
+    box-shadow:0 0 16px rgba(34,211,238,0.4);
+  }
+  .tab-btn:hover{
+    border-color:var(--accent-soft);
+  }
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{
+    background:var(--card-bg);
+    border-radius:24px;
+    border:1px solid var(--border-soft);
+    padding:20px 16px 22px;
+    box-shadow:0 18px 40px rgba(15,23,42,0.9);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:-120px;
+    background:radial-gradient(circle at top,var(--accent-soft) 0,transparent 55%);
+    opacity:0.08;
+    pointer-events:none;
+  }
+
+  .top-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    align-items:flex-start;
+    justify-content:center;
+  }
+
+  /* Bowl / Lid */
+  .bowl-wrap{
+    flex:0 1 320px;
+    display:flex;
+    justify-content:center;
+  }
+  .bowl{
+    position:relative;
+    width:260px;
+    height:260px;
+    perspective:900px;
+  }
+  .bowl-base{
+    position:absolute;
+    inset:40px 24px 12px;
+    border-radius:50% 50% 40% 40%;
+    background:radial-gradient(circle at 30% 15%,#1e293b 0,#020617 60%);
+    box-shadow:
+      0 18px 45px rgba(0,0,0,0.9),
+      0 0 0 1px rgba(148,163,184,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transform-style:preserve-3d;
+  }
+  .bowl-lid{
+    position:absolute;
+    inset:8px 28px auto;
+    height:120px;
+    border-radius:48% 48% 42% 42%;
+    background:linear-gradient(145deg,#0f172a,#1f2937);
+    box-shadow:
+      0 14px 30px rgba(0,0,0,0.9),
+      0 0 0 1px rgba(148,163,184,0.4);
+    transform-origin:center bottom;
+    transform:translateY(-76px) rotateX(26deg);
+    transition:transform .5s ease;
+  }
+  .bowl-lid::before{
+    content:"";
+    position:absolute;
+    width:48px;
+    height:14px;
+    border-radius:999px 999px 8px 8px;
+    background:linear-gradient(135deg,#22d3ee,#a855f7);
+    top:-10px;
+    left:50%;
+    transform:translateX(-50%);
+    box-shadow:0 0 16px rgba(34,211,238,0.7);
+  }
+  .bowl.bowl--closed .bowl-lid{
+    transform:translateY(0) rotateX(0deg);
+  }
+  .bowl.bowl--shake .bowl-base,
+  .bowl.bowl--shake .bowl-lid{
+    animation:shake 0.6s cubic-bezier(.36,.07,.19,.97) both infinite;
+  }
+
+  .dice-row{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+  }
+  .dice-strip{
+    display:flex;
+    gap:8px;
+  }
+  .die{
+    width:62px;
+    height:62px;
+    border-radius:18px;
+    background:radial-gradient(circle at 25% 20%,#1f2937 0,#020617 70%);
+    border:1px solid rgba(148,163,184,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    box-shadow:
+      0 8px 18px rgba(0,0,0,0.9),
+      0 0 0 1px rgba(15,23,42,0.8);
+    transform:translateZ(20px);
+  }
+  .die-emoji{font-size:26px;}
+  .die-label{
+    font-size:11px;
+    margin-top:3px;
+    color:var(--text-sub);
+  }
+
+  .info-chip{
+    font-size:11px;
+    padding:4px 9px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,0.5);
+    color:var(--text-sub);
+  }
+
+  .control-panel{
+    flex:1 1 280px;
+    min-width:260px;
+  }
+  .control-panel h2{
+    margin:0 0 6px;
+    font-size:20px;
+  }
+  .control-panel p{
+    margin:0 0 10px;
+    color:var(--text-sub);
+    font-size:13px;
+  }
+
+  .btn-main{
+    margin-top:14px;
+    padding:11px 18px;
+    border-radius:999px;
+    border:none;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    background:linear-gradient(135deg,#22d3ee,#a855f7);
+    color:#0b1120;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 0 20px rgba(34,211,238,0.6);
+    transition:.2s;
+  }
+  .btn-main:hover{
+    transform:translateY(-1px) scale(1.02);
+    box-shadow:0 0 26px rgba(34,211,238,0.8);
+  }
+  .btn-main[disabled]{
+    opacity:.55;
+    cursor:default;
+    box-shadow:none;
+  }
+
+  .small-text{
+    font-size:11px;
+    color:var(--text-sub);
+    margin-top:6px;
+  }
+  .last-result{
+    margin-top:10px;
+    font-size:13px;
+    color:var(--text-sub);
+  }
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:6px;
+  }
+  .tag{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:rgba(15,23,42,0.9);
+    border:1px solid rgba(148,163,184,0.3);
+  }
+
+  .history-layout{
+    display:flex;
+    flex-wrap:wrap;
+    gap:18px;
+  }
+  .history-card,.stats-card{
+    flex:1 1 280px;
+    background:var(--card-bg);
+    border-radius:20px;
+    border:1px solid var(--border-soft);
+    padding:14px 12px 16px;
+  }
+  .history-card h3,.stats-card h3{
+    margin:0 0 4px;
+    font-size:16px;
+  }
+
+  .history-list{
+    max-height:280px;
+    overflow-y:auto;
+    margin-top:8px;
+    padding-right:4px;
+    font-size:12px;
+  }
+  .history-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:4px 0;
+    border-bottom:1px dotted rgba(30,64,175,0.6);
+  }
+  .history-left{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .pill{
+    padding:2px 8px;
+    border-radius:999px;
+    background:rgba(15,23,42,0.9);
+    border:1px solid rgba(148,163,184,0.5);
+    font-size:11px;
+  }
+  .emoji-strip{
+    display:flex;
+    gap:3px;
+  }
+  .emoji-strip span{font-size:14px;}
+
+  .stats-grid{
+    display:grid;
+    grid-template-columns:1.4fr 3fr;
+    gap:6px 10px;
+    margin-top:10px;
+    font-size:12px;
+  }
+  .stat-label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    color:var(--text-sub);
+  }
+  .stat-bar-wrap{
+    background:rgba(15,23,42,0.9);
+    border-radius:999px;
+    overflow:hidden;
+    border:1px solid rgba(30,64,175,0.7);
+    height:16px;
+  }
+  .stat-bar{
+    height:100%;
+    background:linear-gradient(90deg,#22d3ee,#a855f7);
+    width:0%;
+    transition:width .3s ease-out;
+  }
+  .stat-text{
+    font-size:10px;
+    text-align:right;
+    color:var(--text-sub);
+    margin-top:2px;
+  }
+
+  .history-list::-webkit-scrollbar{width:4px;}
+  .history-list::-webkit-scrollbar-thumb{
+    background:#1f2937;
+    border-radius:999px;
+  }
+
+  @keyframes fadeDown{
+    from{opacity:0;transform:translateY(-12px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @keyframes shake{
+    0%{transform:translate(0,0) rotate(0);}
+    15%{transform:translate(-6px,-1px) rotate(-2deg);}
+    30%{transform:translate(6px,1px) rotate(2deg);}
+    45%{transform:translate(-5px,0) rotate(-1.5deg);}
+    60%{transform:translate(4px,1px) rotate(1.5deg);}
+    75%{transform:translate(-3px,-1px) rotate(-1deg);}
+    100%{transform:translate(0,0) rotate(0);}
+  }
+
+  @media (max-width:640px){
+    .bowl{width:220px;height:220px;}
+    .bowl-base{inset:34px 20px 10px;}
+    .bowl-lid{inset:6px 24px auto;height:110px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>น้ำเต้าปูปลา PHANToM</h1>
+  <p>ฝาปิด–เปิด + เขย่า 3 วินาที • อ่านเปอร์เซ็นจาก Firebase • เก็บประวัติ 100 ครั้งล่าสุด</p>
+</header>
+
+<div class="wrapper">
+  <div class="tabs">
+    <button class="tab-btn active" data-target="play-panel">
+      <span class="icon">🎲</span> โต๊ะหลัก
+    </button>
+    <button class="tab-btn" data-target="history-panel">
+      <span class="icon">📈</span> ประวัติ & สถิติ
+    </button>
+  </div>
+
+  <!-- โต๊ะหลัก -->
+  <section id="play-panel" class="panel active">
+    <div class="card">
+      <div class="top-row">
+        <div class="bowl-wrap">
+          <div class="bowl bowl--open" id="bowl">
+            <div class="bowl-base">
+              <div class="dice-row">
+                <div class="dice-strip">
+                  <div class="die">
+                    <div class="die-emoji" id="die1-emoji">🐟</div>
+                    <div class="die-label" id="die1-label">ปลา</div>
+                  </div>
+                  <div class="die">
+                    <div class="die-emoji" id="die2-emoji">🦀</div>
+                    <div class="die-label" id="die2-label">ปู</div>
+                  </div>
+                  <div class="die">
+                    <div class="die-emoji" id="die3-emoji">🦐</div>
+                    <div class="die-label" id="die3-label">กุ้ง</div>
+                  </div>
+                </div>
+                <span class="info-chip" id="round-info">ยังไม่เคยทอย</span>
+              </div>
+            </div>
+            <div class="bowl-lid"></div>
+          </div>
+        </div>
+
+        <div class="control-panel">
+          <h2>สุ่มสมบูรณ์ หรือ bias ตาม config ก็ได้</h2>
+          <p>
+            ฝาจะปิด → เขย่า 3 วินาที → เปิดให้เห็นผล 3 หน้า<br>
+            ถ้า admin ตั้งเปอร์เซ็น bias ไว้ จะดึงจาก Firebase อัตโนมัติ
+          </p>
+
+          <button class="btn-main" id="shake-btn">
+            <span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>
+          </button>
+
+          <div class="small-text" id="mode-text">
+            * ถ้า admin ตั้งเปอร์เซ็นเท่ากันทุกหน้า = perfect random (โอกาสเท่ากัน)
+          </div>
+
+          <div class="last-result" id="last-result">
+            ยังไม่มีประวัติการทอย เริ่มสุ่มครั้งแรกได้เลย
+          </div>
+
+          <div class="tags">
+            <div class="tag">3 ลูกเต๋า</div>
+            <div class="tag">ประวัติ 100 ครั้งล่าสุด</div>
+            <div class="tag">สถิติ realtime</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ประวัติ & สถิติ -->
+  <section id="history-panel" class="panel">
+    <div class="history-layout">
+
+      <div class="history-card">
+        <h3>ประวัติการทอย (100 ครั้งล่าสุด)</h3>
+        <p style="margin:0 0 4px;font-size:12px;color:var(--text-sub);">
+          แสดงจากล่าสุด → ย้อนหลัง • หนึ่งบรรทัด = 1 รอบทอย
+        </p>
+        <div class="history-list" id="history-list">
+          <div style="font-size:12px;color:var(--text-sub);margin-top:6px;">
+            ยังไม่มีประวัติ กดทอยที่หน้า “โต๊ะหลัก” ก่อน
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-card">
+        <h3>สถิติการออกหน้า (รวมทุกหน้าลูกเต๋า)</h3>
+        <p style="margin:0 0 4px;font-size:12px;color:var(--text-sub);">
+          คิดจากผลรวมทุกช่องลูกเต๋า จากประวัติในฝั่งซ้าย (สูงสุด 100 รอบ = 300 ช่อง)
+        </p>
+        <div class="stats-grid" id="stats-grid"></div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- Overlay login ด้วย Google -->
+<div id="login-overlay" style="
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(2,6,23,0.95);z-index:9999;flex-direction:column;text-align:center;
+">
+  <h2 style="color:#e5e7eb;margin-bottom:10px;">ล็อกอินด้วย Google ก่อนเริ่มใช้งาน</h2>
+  <p style="color:#9ca3af;font-size:13px;margin:0 0 14px;">
+    ใช้ Gmail ใดก็ได้ • ใช้ Firebase เก็บ config และสถิติของโต๊ะนี้
+  </p>
+  <button id="google-login-btn" style="
+    padding:10px 18px;border-radius:999px;border:0;
+    background:linear-gradient(135deg,#22d3ee,#a855f7);
+    color:#020617;font-weight:600;cursor:pointer;
+    box-shadow:0 0 18px rgba(34,211,238,0.7);font-size:14px;
+  ">
+    🔑 Sign in with Google
+  </button>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js';
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged
+  } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    onSnapshot,
+    serverTimestamp
+  } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
+
+  // 👉 ใส่ config โปรเจกต์ Firebase ของคุณตรงนี้
+  const firebaseConfig = {
+  apiKey: "AIzaSyBpxF7PVDhULJcA6LbOe8YtVmpqo77R0GQ",
+  authDomain: "phantom-namtao.firebaseapp.com",
+  projectId: "phantom-namtao",
+  storageBucket: "phantom-namtao.firebasestorage.app",
+  messagingSenderId: "842060392458",
+  appId: "1:842060392458:web:e09bc5221ef8211f4957f3",
+  measurementId: "G-T0BXJGRX8X"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const provider = new GoogleAuthProvider();
+
+  const SHAKE_DURATION_MS = 3000;
+  const LID_CLOSE_MS      = 400;
+
+  const animals = [
+    { key:"ปลา",    emoji:"🐟" },
+    { key:"ปู",     emoji:"🦀" },
+    { key:"กุ้ง",    emoji:"🦐" },
+    { key:"เต่า",   emoji:"🐢" },
+    { key:"ไก่",    emoji:"🐔" },
+    { key:"น้ำเต้า", emoji:"🎲" }
+  ];
+
+  const defaultWeights = {
+    "ปลา":100,
+    "ปู":100,
+    "กุ้ง":100,
+    "เต่า":100,
+    "ไก่":100,
+    "น้ำเต้า":100
+  };
+  let weightConfig = { ...defaultWeights };
+
+  const bowlEl       = document.getElementById("bowl");
+  const shakeBtn     = document.getElementById("shake-btn");
+  const roundInfo    = document.getElementById("round-info");
+  const lastResultEl = document.getElementById("last-result");
+  const historyList  = document.getElementById("history-list");
+  const statsGrid    = document.getElementById("stats-grid");
+  const modeText     = document.getElementById("mode-text");
+  const loginOverlay = document.getElementById("login-overlay");
+  const loginBtn     = document.getElementById("google-login-btn");
+
+  const diceEmojiEls = [
+    document.getElementById("die1-emoji"),
+    document.getElementById("die2-emoji"),
+    document.getElementById("die3-emoji")
+  ];
+  const diceLabelEls = [
+    document.getElementById("die1-label"),
+    document.getElementById("die2-label"),
+    document.getElementById("die3-label")
+  ];
+
+  let roundCount = 0;
+  let history = [];
+
+  // Tabs
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.target).classList.add("active");
+    });
+  });
+
+  // สร้าง tableId ติดเครื่อง
+  let tableId = localStorage.getItem("phantom_namtao_table_id");
+  if(!tableId){
+    tableId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("table_" + Date.now());
+    localStorage.setItem("phantom_namtao_table_id", tableId);
+  }
+  const tableDocRef  = doc(db, "tables", tableId);
+  const configDocRef = doc(db, "config", "globalGame");
+
+  function renderDice(faces){
+    faces.forEach((a,idx)=>{
+      diceEmojiEls[idx].textContent = a.emoji;
+      diceLabelEls[idx].textContent = a.key;
+    });
+  }
+
+  function renderHistory(){
+    if(history.length === 0){
+      historyList.innerHTML = `<div style="font-size:12px;color:#9ca3af;margin-top:6px;">
+        ยังไม่มีประวัติ กดทอยที่หน้า “โต๊ะหลัก” ก่อน
+      </div>`;
+      return;
+    }
+    historyList.innerHTML = "";
+    history.forEach(item=>{
+      const row = document.createElement("div");
+      row.className = "history-row";
+
+      const left = document.createElement("div");
+      left.className = "history-left";
+
+      const roundPill = document.createElement("div");
+      roundPill.className = "pill";
+      roundPill.textContent = `#${item.round}`;
+
+      const emojiStrip = document.createElement("div");
+      emojiStrip.className = "emoji-strip";
+      item.faces.forEach(a=>{
+        const span = document.createElement("span");
+        span.textContent = a.emoji;
+        emojiStrip.appendChild(span);
+      });
+
+      left.appendChild(roundPill);
+      left.appendChild(emojiStrip);
+
+      const timeSpan = document.createElement("div");
+      timeSpan.style.fontSize = "11px";
+      timeSpan.style.color    = "#9ca3af";
+      timeSpan.textContent    = item.time;
+
+      row.appendChild(left);
+      row.appendChild(timeSpan);
+      historyList.appendChild(row);
+    });
+  }
+
+  function renderStats(){
+    statsGrid.innerHTML = "";
+    if(history.length === 0){
+      statsGrid.innerHTML = `<div style="grid-column:1 / -1;font-size:12px;color:#9ca3af;margin-top:6px;">
+        ยังไม่มีข้อมูล กรุณาทอยอย่างน้อย 1 ครั้ง
+      </div>`;
+      return;
+    }
+
+    const counts = {};
+    animals.forEach(a=>counts[a.key]=0);
+
+    history.forEach(item=>{
+      item.faces.forEach(a=>{ counts[a.key]++; });
+    });
+
+    const totalFaces = history.length * 3;
+
+    animals.forEach(a=>{
+      const count = counts[a.key];
+      const pct   = totalFaces>0 ? (count/totalFaces)*100 : 0;
+
+      const labelDiv = document.createElement("div");
+      labelDiv.className = "stat-label";
+      labelDiv.innerHTML = `<span>${a.emoji}</span><span>${a.key}</span>`;
+
+      const barWrap = document.createElement("div");
+      barWrap.className = "stat-bar-wrap";
+      const bar = document.createElement("div");
+      bar.className = "stat-bar";
+      bar.style.width = pct.toFixed(1) + "%";
+      barWrap.appendChild(bar);
+
+      statsGrid.appendChild(labelDiv);
+      statsGrid.appendChild(barWrap);
+
+      const text = document.createElement("div");
+      text.className = "stat-text";
+      text.textContent = `${count} ครั้ง • ${pct.toFixed(1)}%`;
+      statsGrid.appendChild(document.createElement("div"));
+      statsGrid.appendChild(text);
+    });
+  }
+
+  function pickOneWithWeights(){
+    const keys = animals.map(a=>a.key);
+    const weights = keys.map(k=>{
+      const v = Number(weightConfig[k] ?? 0);
+      return isNaN(v) || v<0 ? 0 : v;
+    });
+    let total = weights.reduce((a,b)=>a+b,0);
+    if(total <= 0){
+      // fallback เท่ากันทุกหน้า
+      total = keys.length;
+      weights.fill(1);
+    }
+    let r = Math.random() * total;
+    for(let i=0;i<keys.length;i++){
+      r -= weights[i];
+      if(r <= 0){
+        return animals[i];
+      }
+    }
+    return animals[animals.length-1];
+  }
+
+  function randomFaces3(){
+    return [pickOneWithWeights(), pickOneWithWeights(), pickOneWithWeights()];
+  }
+
+  function updateModeText(){
+    const vals = animals.map(a=>Number(weightConfig[a.key] ?? 0));
+    const positive = vals.filter(v=>v>0);
+    if(positive.length === 0){
+      modeText.textContent = "⚠ ค่าเปอร์เซ็นทั้งหมดเป็น 0 หรือว่าง ระบบจะ fallback เป็นการสุ่มเท่ากันทุกหน้า";
+      return;
+    }
+    const allPos = vals.every(v=>v>0);
+    if(!allPos){
+      modeText.textContent = "โหมด: Bias + Block – บางหน้าอาจไม่ออกเลยเพราะ percent ≤ 0 (ดู/ปรับในหน้า admin)";
+      return;
+    }
+    const first = vals[0];
+    const allEqual = vals.every(v=>v === first);
+    if(allEqual){
+      modeText.textContent = "โหมด: Perfect Random – ทุกหน้ามีโอกาสเท่ากัน (ตาม config)";
+    }else{
+      modeText.textContent = "โหมด: Bias – แต่ละหน้ามีโอกาสไม่เท่ากัน (อ่านจาก config ใน Firebase)";
+    }
+  }
+
+  function applyConfigDoc(data){
+    if(!data || !data.weights) return;
+    const newW = {...weightConfig};
+    animals.forEach(a=>{
+      const raw = data.weights[a.key];
+      const v = Number(raw);
+      if(!isNaN(v)){
+        newW[a.key] = v;
+      }
+    });
+    weightConfig = newW;
+    updateModeText();
+  }
+
+  async function recordRollToFirestore(faces, user){
+    try{
+      await setDoc(
+        tableDocRef,
+        {
+          lastActivity: serverTimestamp(),
+          lastResultKeys: faces.map(f=>f.key),
+          totalRounds: roundCount,
+          status: "active",
+          ownerUid: user?.uid || null,
+          ownerEmail: user?.email || null
+        },
+        { merge:true }
+      );
+    }catch(e){
+      console.error("recordRollToFirestore error:", e);
+    }
+  }
+
+  // Login ด้วย Google
+  loginBtn.addEventListener("click", async ()=>{
+    try{
+      await signInWithPopup(auth, provider);
+    }catch(e){
+      console.error("Google login error", e);
+      alert("ล็อกอินไม่สำเร็จ ลองอีกครั้ง");
+    }
+  });
+
+  let firebaseReady = false;
+  let currentUser   = null;
+
+  onAuthStateChanged(auth, async (user)=>{
+    currentUser = user || null;
+    if(!user){
+      loginOverlay.style.display = "flex";
+      return;
+    }
+    loginOverlay.style.display = "none";
+
+    if(firebaseReady) return;
+    firebaseReady = true;
+
+    try{
+      await setDoc(
+        tableDocRef,
+        {
+          createdAt: serverTimestamp(),
+          status: "active",
+          ownerUid: user.uid,
+          ownerEmail: user.email || null
+        },
+        { merge:true }
+      );
+    }catch(e){
+      console.error("init table doc error:", e);
+    }
+
+    onSnapshot(configDocRef, (snap)=>{
+      if(snap.exists()){
+        applyConfigDoc(snap.data());
+      }else{
+        weightConfig = {...defaultWeights};
+        updateModeText();
+      }
+    }, (err)=>{
+      console.error("onSnapshot config error:", err);
+    });
+  });
+
+  // ปุ่มเขย่า – 3 วินาที
+  shakeBtn.addEventListener("click", ()=>{
+    if(shakeBtn.disabled) return;
+    if(!currentUser){
+      alert("กรุณา Login ด้วย Google ก่อน");
+      return;
+    }
+
+    shakeBtn.disabled = true;
+    shakeBtn.innerHTML = `<span>กำลังปิดฝา & เขย่า...</span> <span>🌀</span>`;
+
+    bowlEl.classList.add("bowl--closed");
+    bowlEl.classList.remove("bowl--open");
+
+    setTimeout(()=>{
+      bowlEl.classList.add("bowl--shake");
+
+      const faces = randomFaces3();
+
+      setTimeout(async ()=>{
+        bowlEl.classList.remove("bowl--shake");
+        bowlEl.classList.remove("bowl--closed");
+        bowlEl.classList.add("bowl--open");
+
+        renderDice(faces);
+
+        roundCount++;
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+
+        history.unshift({ round: roundCount, faces, time: timeStr });
+        if(history.length > 100) history.pop();
+
+        roundInfo.textContent = `รอบล่าสุด: #${roundCount}`;
+        lastResultEl.innerHTML = `
+          รอบที่ <b>#${roundCount}</b> เวลา ${timeStr}<br>
+          ผล: ${faces.map(f=>f.emoji + " " + f.key).join(" • ")}
+        `;
+
+        renderHistory();
+        renderStats();
+        await recordRollToFirestore(faces, currentUser);
+
+        shakeBtn.disabled = false;
+        shakeBtn.innerHTML = `<span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>`;
+      }, SHAKE_DURATION_MS);
+    }, LID_CLOSE_MS);
+  });
+
+  renderStats();
+  updateModeText();
+</script>
+</body>
+</html>
