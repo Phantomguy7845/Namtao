@@ -20,9 +20,7 @@
     --text-main: #e5e7eb;
     --text-sub: #9ca3af;
   }
-
   *{box-sizing:border-box;}
-
   body{
     margin:0;
     font-family:"Prompt",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
@@ -32,7 +30,6 @@
     color:var(--text-main);
     overflow-x:hidden;
   }
-
   header{
     text-align:center;
     padding:28px 16px 10px;
@@ -49,20 +46,17 @@
     color:var(--text-sub);
     font-size:14px;
   }
-
   .wrapper{
     max-width:1080px;
     margin:0 auto 40px;
     padding:0 16px 32px;
   }
-
   .tabs{
     display:flex;
     justify-content:center;
     gap:8px;
     margin:10px 0 22px;
   }
-
   .tab-btn{
     border-radius:999px;
     border:1px solid transparent;
@@ -82,10 +76,7 @@
     color:var(--accent);
     box-shadow:0 0 16px rgba(34,211,238,0.4);
   }
-  .tab-btn:hover{
-    border-color:var(--accent-soft);
-  }
-
+  .tab-btn:hover{border-color:var(--accent-soft);}
   .panel{display:none;}
   .panel.active{display:block;}
 
@@ -139,7 +130,15 @@
     align-items:center;
     justify-content:center;
     transform-style:preserve-3d;
+    z-index:1;
+    transition:opacity .25s ease;
+    opacity:1;
   }
+  /* ตอนฝาปิด ให้ลูกเต๋าหายไป */
+  .bowl.bowl--closed .bowl-base{
+    opacity:0;
+  }
+
   .bowl-lid{
     position:absolute;
     inset:8px 28px auto;
@@ -152,6 +151,7 @@
     transform-origin:center bottom;
     transform:translateY(-76px) rotateX(26deg);
     transition:transform .5s ease;
+    z-index:2;
   }
   .bowl-lid::before{
     content:"";
@@ -179,10 +179,7 @@
     align-items:center;
     gap:8px;
   }
-  .dice-strip{
-    display:flex;
-    gap:8px;
-  }
+  .dice-strip{display:flex;gap:8px;}
   .die{
     width:62px;
     height:62px;
@@ -390,7 +387,7 @@
 
 <header>
   <h1>น้ำเต้าปูปลา PHANToM</h1>
-  <p>ฝาปิด–เปิด + เขย่า 3 วินาที • เก็บประวัติ 100 ครั้งล่าสุด</p>
+  <p>ปิดฝา & เขย่า 3 วินาที • สุ่มแบบ Perfect Random • เปิดฝาเมื่อไหร่โชว์ผลเมื่อนั้น</p>
 </header>
 
 <div class="wrapper">
@@ -433,10 +430,10 @@
         </div>
 
         <div class="control-panel">
-          <h2>สุ่มสมบูรณ์ Perfect Random</h2>
+          <h2>สองจังหวะ: ปิดฝาเขย่า → เปิดฝาโชว์ผล</h2>
           <p>
-            ฝาจะปิด → เขย่า 3 วินาที → เปิดให้เห็นผล 3 หน้า<br>
-            
+            กดครั้งแรก: ฝาปิด + เขย่า 3 วินาที แล้วหยุดเขย่า แต่ยังปิดฝา<br>
+            ขณะที่ฝาปิด สามารถลงเดิมพันได้เรื่อยๆ จนกว่าคุณจะกดเปิดฝา
           </p>
 
           <button class="btn-main" id="shake-btn">
@@ -444,7 +441,7 @@
           </button>
 
           <div class="small-text" id="mode-text">
-            *
+            ระบบกำลังสุ่ม...
           </div>
 
           <div class="last-result" id="last-result">
@@ -453,6 +450,7 @@
 
           <div class="tags">
             <div class="tag">3 ลูกเต๋า</div>
+            <div class="tag">สุ่มต่อเนื่องขณะฝาปิด</div>
             <div class="tag">ประวัติ 100 ครั้งล่าสุด</div>
             <div class="tag">สถิติ realtime</div>
           </div>
@@ -489,7 +487,7 @@
   </section>
 </div>
 
-<!-- Overlay login ด้วย Google -->
+<!-- Overlay Login -->
 <div id="login-overlay" style="
   position:fixed;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -539,11 +537,11 @@
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);
-
   const provider = new GoogleAuthProvider();
 
   const SHAKE_DURATION_MS = 3000;
   const LID_CLOSE_MS      = 400;
+  const RANDOM_INTERVAL_MS= 100; // ความถี่ในการสุ่มตอนฝาปิด
 
   const animals = [
     { key:"ปลา",    emoji:"🐟" },
@@ -555,14 +553,14 @@
   ];
 
   const defaultWeights = {
-    "ปลา":100,
-    "ปู":100,
-    "กุ้ง":100,
-    "เต่า":100,
-    "ไก่":100,
-    "น้ำเต้า":100
+    "ปลา":100,"ปู":100,"กุ้ง":100,"เต่า":100,"ไก่":100,"น้ำเต้า":100
   };
-  let weightConfig = { ...defaultWeights };
+
+  // global vs per-table
+  let globalWeights        = { ...defaultWeights };
+  let tableOverrideWeights = null;
+  let useTableOverride     = false;
+  let effectiveWeights     = { ...defaultWeights };
 
   const bowlEl       = document.getElementById("bowl");
   const shakeBtn     = document.getElementById("shake-btn");
@@ -585,8 +583,12 @@
     document.getElementById("die3-label")
   ];
 
-  let roundCount = 0;
-  let history = [];
+  let roundCount   = 0;
+  let history      = [];
+  let currentUser  = null;
+  let gamePhase    = "idle"; // "idle" | "closed_randomizing"
+  let randomTimer  = null;
+  let pendingFaces = null;
 
   // Tabs
   document.querySelectorAll(".tab-btn").forEach(btn=>{
@@ -598,14 +600,14 @@
     });
   });
 
-  // สร้าง tableId ติดเครื่อง
+  // สร้าง tableId ผูกกับเครื่อง
   let tableId = localStorage.getItem("phantom_namtao_table_id");
   if(!tableId){
     tableId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("table_" + Date.now());
     localStorage.setItem("phantom_namtao_table_id", tableId);
   }
   const tableDocRef  = doc(db, "tables", tableId);
-  const configDocRef = doc(db, "config", "globalGame");
+  const globalDocRef = doc(db, "config", "globalGame");
 
   function renderDice(faces){
     faces.forEach((a,idx)=>{
@@ -699,24 +701,116 @@
     });
   }
 
+  function recomputeEffectiveWeights(){
+    const src = (useTableOverride && tableOverrideWeights)
+      ? tableOverrideWeights
+      : globalWeights;
+
+    const merged = {...defaultWeights};
+    animals.forEach(a=>{
+      const raw = src[a.key];
+      const v = Number(raw);
+      if(!isNaN(v)){
+        merged[a.key] = v;
+      }
+    });
+    effectiveWeights = merged;
+    updateModeText();
+  }
+
+  function updateModeText(){
+    const srcName = useTableOverride && tableOverrideWeights
+      ? "ค่าเฉพาะโต๊ะนี้ (override)"
+      : "Global default";
+
+    const vals = animals.map(a=>Number(effectiveWeights[a.key] ?? 0));
+    const positive = vals.filter(v=>v>0);
+
+    if(positive.length === 0){
+      modeText.textContent = `โหมด: Fallback – ค่าเปอร์เซ็นไม่ถูกต้อง ใช้ค่าเริ่มต้นเท่ากันทุกหน้า (จาก ${srcName})`;
+      return;
+    }
+
+    const allPos = vals.every(v=>v>0);
+    if(!allPos){
+      modeText.textContent = `โหมด: Bias + Block – บางหน้าอาจไม่ออกเลย (เปอร์เซ็น ≤ 0) • แหล่งค่า: ${srcName}`;
+      return;
+    }
+
+    const first = vals[0];
+    const allEqual = vals.every(v=>v === first);
+    if(allEqual){
+      modeText.textContent = `โหมด: Perfect Random – ทุกหน้ามีโอกาสเท่ากัน • แหล่งค่า: ${srcName}`;
+    }else{
+      modeText.textContent = `โหมด: Bias – แต่ละหน้ามีโอกาสไม่เท่ากัน • แหล่งค่า: ${srcName}`;
+    }
+  }
+
+  function applyGlobalConfig(data){
+    if(!data || !data.weights){
+      globalWeights = {...defaultWeights};
+      recomputeEffectiveWeights();
+      return;
+    }
+    const newW = {...globalWeights};
+    animals.forEach(a=>{
+      const v = Number(data.weights[a.key]);
+      if(!isNaN(v)){
+        newW[a.key] = v;
+      }
+    });
+    globalWeights = newW;
+    recomputeEffectiveWeights();
+  }
+
+  function applyTableConfig(data){
+    if(!data){
+      useTableOverride     = false;
+      tableOverrideWeights = null;
+      recomputeEffectiveWeights();
+      return;
+    }
+
+    const useGlobal = data.tableUseGlobal;
+    const tw        = data.tableWeights;
+
+    if(useGlobal === true || !tw){
+      useTableOverride     = false;
+      tableOverrideWeights = null;
+      recomputeEffectiveWeights();
+      return;
+    }
+
+    const newW = {};
+    animals.forEach(a=>{
+      const v = Number(tw[a.key]);
+      if(!isNaN(v)){
+        newW[a.key] = v;
+      }
+    });
+
+    tableOverrideWeights = newW;
+    useTableOverride     = true;
+    recomputeEffectiveWeights();
+  }
+
   function pickOneWithWeights(){
-    const keys = animals.map(a=>a.key);
+    const keys    = animals.map(a=>a.key);
     const weights = keys.map(k=>{
-      const v = Number(weightConfig[k] ?? 0);
+      const v = Number(effectiveWeights[k] ?? 0);
       return isNaN(v) || v<0 ? 0 : v;
     });
+
     let total = weights.reduce((a,b)=>a+b,0);
     if(total <= 0){
-      // fallback เท่ากันทุกหน้า
       total = keys.length;
       weights.fill(1);
     }
+
     let r = Math.random() * total;
     for(let i=0;i<keys.length;i++){
       r -= weights[i];
-      if(r <= 0){
-        return animals[i];
-      }
+      if(r <= 0) return animals[i];
     }
     return animals[animals.length-1];
   }
@@ -725,42 +819,23 @@
     return [pickOneWithWeights(), pickOneWithWeights(), pickOneWithWeights()];
   }
 
-  function updateModeText(){
-    const vals = animals.map(a=>Number(weightConfig[a.key] ?? 0));
-    const positive = vals.filter(v=>v>0);
-    if(positive.length === 0){
-      modeText.textContent = "⚠ ค่าเปอร์เซ็นทั้งหมดเป็น 0 หรือว่าง ระบบจะ fallback เป็นการสุ่มเท่ากันทุกหน้า";
-      return;
-    }
-    const allPos = vals.every(v=>v>0);
-    if(!allPos){
-      modeText.textContent = "โหมด: Bias + Block – บางหน้าอาจไม่ออกเลยเพราะ percent ≤ 0 (ดู/ปรับในหน้า admin)";
-      return;
-    }
-    const first = vals[0];
-    const allEqual = vals.every(v=>v === first);
-    if(allEqual){
-      modeText.textContent = "โหมด: Perfect Random – ทุกหน้ามีโอกาสเท่ากัน (ตาม config)";
-    }else{
-      modeText.textContent = "โหมด: Bias – แต่ละหน้ามีโอกาสไม่เท่ากัน (อ่านจาก config ใน Firebase)";
+  function startRandomization(){
+    pendingFaces = randomFaces3();
+    if(randomTimer) clearInterval(randomTimer);
+    randomTimer = setInterval(()=>{
+      pendingFaces = randomFaces3();
+    }, RANDOM_INTERVAL_MS);
+  }
+
+  function stopRandomization(){
+    if(randomTimer){
+      clearInterval(randomTimer);
+      randomTimer = null;
     }
   }
 
-  function applyConfigDoc(data){
-    if(!data || !data.weights) return;
-    const newW = {...weightConfig};
-    animals.forEach(a=>{
-      const raw = data.weights[a.key];
-      const v = Number(raw);
-      if(!isNaN(v)){
-        newW[a.key] = v;
-      }
-    });
-    weightConfig = newW;
-    updateModeText();
-  }
-
-  async function recordRollToFirestore(faces, user){
+  async function recordRollToFirestore(faces){
+    if(!currentUser) return;
     try{
       await setDoc(
         tableDocRef,
@@ -769,8 +844,8 @@
           lastResultKeys: faces.map(f=>f.key),
           totalRounds: roundCount,
           status: "active",
-          ownerUid: user?.uid || null,
-          ownerEmail: user?.email || null
+          ownerUid: currentUser.uid,
+          ownerEmail: currentUser.email || null
         },
         { merge:true }
       );
@@ -779,7 +854,7 @@
     }
   }
 
-  // Login ด้วย Google
+  // Login
   loginBtn.addEventListener("click", async ()=>{
     try{
       await signInWithPopup(auth, provider);
@@ -790,7 +865,6 @@
   });
 
   let firebaseReady = false;
-  let currentUser   = null;
 
   onAuthStateChanged(auth, async (user)=>{
     currentUser = user || null;
@@ -810,7 +884,8 @@
           createdAt: serverTimestamp(),
           status: "active",
           ownerUid: user.uid,
-          ownerEmail: user.email || null
+          ownerEmail: user.email || null,
+          tableUseGlobal: true // เริ่มต้นให้ใช้ Global ก่อน
         },
         { merge:true }
       );
@@ -818,19 +893,31 @@
       console.error("init table doc error:", e);
     }
 
-    onSnapshot(configDocRef, (snap)=>{
+    // Global config
+    onSnapshot(globalDocRef, (snap)=>{
       if(snap.exists()){
-        applyConfigDoc(snap.data());
+        applyGlobalConfig(snap.data());
       }else{
-        weightConfig = {...defaultWeights};
-        updateModeText();
+        globalWeights = {...defaultWeights};
+        recomputeEffectiveWeights();
       }
     }, (err)=>{
-      console.error("onSnapshot config error:", err);
+      console.error("onSnapshot global config error:", err);
+    });
+
+    // Table config
+    onSnapshot(tableDocRef, (snap)=>{
+      if(snap.exists()){
+        applyTableConfig(snap.data());
+      }else{
+        applyTableConfig(null);
+      }
+    }, (err)=>{
+      console.error("onSnapshot table config error:", err);
     });
   });
 
-  // ปุ่มเขย่า – 3 วินาที
+  // ปุ่มสองจังหวะ
   shakeBtn.addEventListener("click", ()=>{
     if(shakeBtn.disabled) return;
     if(!currentUser){
@@ -838,19 +925,48 @@
       return;
     }
 
-    shakeBtn.disabled = true;
-    shakeBtn.innerHTML = `<span>กำลังปิดฝา & เขย่า...</span> <span>🌀</span>`;
+    // จังหวะที่ 1: ปิดฝา + เขย่า 3 วิ แล้วสุ่มต่อเนื่องจนกว่าจะเปิดฝา
+    if(gamePhase === "idle"){
+      gamePhase = "closed_randomizing";
 
-    bowlEl.classList.add("bowl--closed");
-    bowlEl.classList.remove("bowl--open");
+      shakeBtn.disabled = true;
+      shakeBtn.innerHTML = `<span>กำลังเขย่า...</span> <span>🌀</span>`;
 
-    setTimeout(()=>{
-      bowlEl.classList.add("bowl--shake");
+      // ปิดฝา
+      bowlEl.classList.add("bowl--closed");
+      bowlEl.classList.remove("bowl--open");
 
-      const faces = randomFaces3();
+      // เริ่มสุ่มทันทีเมื่อฝาปิด
+      startRandomization();
+
+      // หน่วงให้เห็นอนิเมปิดฝา แล้วเริ่มเขย่า
+      setTimeout(()=>{
+        bowlEl.classList.add("bowl--shake");
+
+        // เขย่า 3 วิ แล้วหยุด แต่ฝายังปิดอยู่ และยังสุ่มต่อเนื่อง
+        setTimeout(()=>{
+          bowlEl.classList.remove("bowl--shake");
+          shakeBtn.disabled = false;
+          shakeBtn.innerHTML = `<span>เปิดฝา & โชว์ผลลัพทันที</span> <span>👁️</span>`;
+        }, SHAKE_DURATION_MS);
+      }, LID_CLOSE_MS);
+
+      return;
+    }
+
+    // จังหวะที่ 2: เปิดฝา + โชว์ผล (ใช้ค่าที่สุ่มล่าสุด) + บันทึกประวัติ
+    if(gamePhase === "closed_randomizing"){
+      gamePhase = "idle";
+
+      shakeBtn.disabled = true;
+      shakeBtn.innerHTML = `<span>กำลังเปิดฝา...</span> <span>✨</span>`;
+
+      stopRandomization();
+      bowlEl.classList.remove("bowl--shake");
+
+      const faces = pendingFaces || randomFaces3();
 
       setTimeout(async ()=>{
-        bowlEl.classList.remove("bowl--shake");
         bowlEl.classList.remove("bowl--closed");
         bowlEl.classList.add("bowl--open");
 
@@ -871,16 +987,20 @@
 
         renderHistory();
         renderStats();
-        await recordRollToFirestore(faces, currentUser);
+        await recordRollToFirestore(faces);
+
+        // เตรียมค่าเริ่มต้นสำหรับรอบต่อไป
+        pendingFaces = randomFaces3();
 
         shakeBtn.disabled = false;
         shakeBtn.innerHTML = `<span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>`;
-      }, SHAKE_DURATION_MS);
-    }, LID_CLOSE_MS);
+      }, 250); // ดีเลย์นิดหน่อยให้รู้สึกว่าฝากำลังเปิด
+    }
   });
 
+  // initial
   renderStats();
-  updateModeText();
+  recomputeEffectiveWeights();
 </script>
 </body>
 </html>
