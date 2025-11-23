@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>น้ำเต้าปูปลา PHANToM</title>
+<title>PHANToM Namtao – Admin</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,9 +12,8 @@
 <style>
   :root{
     --bg: #020617;
-    --card-bg: rgba(15,23,42,0.9);
+    --card-bg: rgba(15,23,42,0.98);
     --accent: #22d3ee;
-    --accent-soft: #0ea5e9;
     --accent-2: #a855f7;
     --border-soft: rgba(148,163,184,0.35);
     --text-main: #e5e7eb;
@@ -28,472 +27,273 @@
       radial-gradient(circle at top,#1e293b 0,#020617 40%),
       radial-gradient(circle at bottom,#0f172a 0,#020617 55%);
     color:var(--text-main);
-    overflow-x:hidden;
   }
   header{
+    padding:18px 16px 8px;
     text-align:center;
-    padding:28px 16px 10px;
-    animation:fadeDown 1s ease forwards;
   }
   header h1{
     margin:0;
-    font-size:32px;
-    letter-spacing:1.5px;
-    text-shadow:0 0 18px #0ea5e9;
+    font-size:24px;
+    text-shadow:0 0 16px #0ea5e9;
   }
   header p{
-    margin:6px 0 0;
+    margin:4px 0 0;
+    font-size:13px;
     color:var(--text-sub);
-    font-size:14px;
   }
   .wrapper{
-    max-width:1080px;
-    margin:0 auto 40px;
+    max-width:1040px;
+    margin:0 auto 32px;
     padding:0 16px 32px;
   }
-  .tabs{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    margin:10px 0 22px;
-  }
-  .tab-btn{
-    border-radius:999px;
-    border:1px solid transparent;
-    padding:8px 18px;
-    font-size:14px;
-    cursor:pointer;
-    background:rgba(15,23,42,0.9);
-    color:var(--text-sub);
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:.2s;
-  }
-  .tab-btn span.icon{font-size:16px;}
-  .tab-btn.active{
-    border-color:var(--accent);
-    color:var(--accent);
-    box-shadow:0 0 16px rgba(34,211,238,0.4);
-  }
-  .tab-btn:hover{border-color:var(--accent-soft);}
-  .panel{display:none;}
-  .panel.active{display:block;}
-
   .card{
-    background:var(--card-bg);
-    border-radius:24px;
-    border:1px solid var(--border-soft);
-    padding:20px 16px 22px;
-    box-shadow:0 18px 40px rgba(15,23,42,0.9);
-    position:relative;
-    overflow:hidden;
-  }
-  .card::before{
-    content:"";
-    position:absolute;
-    inset:-120px;
-    background:radial-gradient(circle at top,var(--accent-soft) 0,transparent 55%);
-    opacity:0.08;
-    pointer-events:none;
-  }
-
-  .top-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:16px;
-    align-items:flex-start;
-    justify-content:center;
-  }
-
-  .bowl-wrap{
-    flex:0 1 320px;
-    display:flex;
-    justify-content:center;
-  }
-  .bowl{
-    position:relative;
-    width:260px;
-    height:260px;
-    perspective:900px;
-  }
-  .bowl-base{
-    position:absolute;
-    inset:40px 24px 12px;
-    border-radius:50% 50% 40% 40%;
-    background:radial-gradient(circle at 30% 15%,#1e293b 0,#020617 60%);
-    box-shadow:
-      0 18px 45px rgba(0,0,0,0.9),
-      0 0 0 1px rgba(148,163,184,0.25);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transform-style:preserve-3d;
-  }
-  .bowl-lid{
-    position:absolute;
-    inset:8px 28px auto;
-    height:120px;
-    border-radius:48% 48% 42% 42%;
-    background:linear-gradient(145deg,#0f172a,#1f2937);
-    box-shadow:
-      0 14px 30px rgba(0,0,0,0.9),
-      0 0 0 1px rgba(148,163,184,0.4);
-    transform-origin:center bottom;
-    transform:translateY(-76px) rotateX(26deg);
-    transition:transform .5s ease;
-  }
-  .bowl-lid::before{
-    content:"";
-    position:absolute;
-    width:48px;
-    height:14px;
-    border-radius:999px 999px 8px 8px;
-    background:linear-gradient(135deg,#22d3ee,#a855f7);
-    top:-10px;
-    left:50%;
-    transform:translateX(-50%);
-    box-shadow:0 0 16px rgba(34,211,238,0.7);
-  }
-  .bowl.bowl--closed .bowl-lid{
-    transform:translateY(0) rotateX(0deg);
-  }
-  .bowl.bowl--shake .bowl-base,
-  .bowl.bowl--shake .bowl-lid{
-    animation:shake 0.6s cubic-bezier(.36,.07,.19,.97) both infinite;
-  }
-
-  .dice-row{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:8px;
-  }
-  .dice-strip{display:flex;gap:8px;}
-  .die{
-    width:62px;
-    height:62px;
-    border-radius:18px;
-    background:radial-gradient(circle at 25% 20%,#1f2937 0,#020617 70%);
-    border:1px solid rgba(148,163,184,0.6);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    box-shadow:
-      0 8px 18px rgba(0,0,0,0.9),
-      0 0 0 1px rgba(15,23,42,0.8);
-    transform:translateZ(20px);
-  }
-  .die-emoji{font-size:26px;}
-  .die-label{
-    font-size:11px;
-    margin-top:3px;
-    color:var(--text-sub);
-  }
-
-  .info-chip{
-    font-size:11px;
-    padding:4px 9px;
-    border-radius:999px;
-    border:1px solid rgba(148,163,184,0.5);
-    color:var(--text-sub);
-  }
-
-  .control-panel{
-    flex:1 1 280px;
-    min-width:260px;
-  }
-  .control-panel h2{
-    margin:0 0 6px;
-    font-size:20px;
-  }
-  .control-panel p{
-    margin:0 0 10px;
-    color:var(--text-sub);
-    font-size:13px;
-  }
-
-  .btn-main{
-    margin-top:14px;
-    padding:11px 18px;
-    border-radius:999px;
-    border:none;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    background:linear-gradient(135deg,#22d3ee,#a855f7);
-    color:#0b1120;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    box-shadow:0 0 20px rgba(34,211,238,0.6);
-    transition:.2s;
-  }
-  .btn-main:hover{
-    transform:translateY(-1px) scale(1.02);
-    box-shadow:0 0 26px rgba(34,211,238,0.8);
-  }
-  .btn-main[disabled]{
-    opacity:.55;
-    cursor:default;
-    box-shadow:none;
-  }
-
-  .small-text{
-    font-size:11px;
-    color:var(--text-sub);
-    margin-top:6px;
-  }
-  .last-result{
-    margin-top:10px;
-    font-size:13px;
-    color:var(--text-sub);
-  }
-  .tags{
-    display:flex;
-    flex-wrap:wrap;
-    gap:6px;
-    margin-top:6px;
-  }
-  .tag{
-    font-size:11px;
-    padding:3px 8px;
-    border-radius:999px;
-    background:rgba(15,23,42,0.9);
-    border:1px solid rgba(148,163,184,0.3);
-  }
-
-  .history-layout{
-    display:flex;
-    flex-wrap:wrap;
-    gap:18px;
-  }
-  .history-card,.stats-card{
-    flex:1 1 280px;
     background:var(--card-bg);
     border-radius:20px;
     border:1px solid var(--border-soft);
-    padding:14px 12px 16px;
+    padding:16px 14px 18px;
+    margin-top:14px;
+    box-shadow:0 18px 40px rgba(15,23,42,0.9);
   }
-  .history-card h3,.stats-card h3{
-    margin:0 0 4px;
-    font-size:16px;
+  .card h2{
+    margin:0 0 6px;
+    font-size:18px;
   }
-
-  .history-list{
-    max-height:280px;
-    overflow-y:auto;
-    margin-top:8px;
-    padding-right:4px;
-    font-size:12px;
+  .card p{
+    margin:2px 0 8px;
+    font-size:13px;
+    color:var(--text-sub);
   }
-  .history-row{
+  .btn{
+    border-radius:999px;
+    border:1px solid transparent;
+    padding:8px 14px;
+    font-size:13px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#22d3ee,#a855f7);
+    color:#020617;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    box-shadow:0 0 16px rgba(34,211,238,0.5);
+    margin-right:6px;
+  }
+  .btn-outline{
+    border-color:var(--border-soft);
+    background:transparent;
+    color:var(--text-main);
+    box-shadow:none;
+  }
+  .btn:disabled{
+    opacity:.6;
+    cursor:default;
+    box-shadow:none;
+  }
+  .tag{
+    display:inline-flex;
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid var(--border-soft);
+    color:var(--text-sub);
+    margin-right:6px;
+  }
+  .login-box{
+    text-align:center;
+    margin-top:12px;
+  }
+  .input-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:4px 0;
-    border-bottom:1px dotted rgba(30,64,175,0.6);
+    gap:8px;
+    margin:4px 0;
+    font-size:13px;
   }
-  .history-left{
+  .input-row label{
     display:flex;
     align-items:center;
     gap:6px;
   }
-  .pill{
-    padding:2px 8px;
+  .input-row input{
+    width:90px;
+    padding:4px 8px;
     border-radius:999px;
-    background:rgba(15,23,42,0.9);
-    border:1px solid rgba(148,163,184,0.5);
-    font-size:11px;
+    border:1px solid var(--border-soft);
+    background:#020617;
+    color:var(--text-main);
+    font-size:13px;
   }
-  .emoji-strip{
+  .two-col{
     display:flex;
-    gap:3px;
+    flex-wrap:wrap;
+    gap:16px;
   }
-  .emoji-strip span{font-size:14px;}
-
-  .stats-grid{
-    display:grid;
-    grid-template-columns:1.4fr 3fr;
-    gap:6px 10px;
-    margin-top:10px;
+  .half{
+    flex:1 1 260px;
+  }
+  .table-list{
+    max-height:260px;
+    overflow-y:auto;
+    font-size:12px;
+    margin-top:6px;
+  }
+  .table-row{
+    border-bottom:1px solid rgba(30,64,175,0.7);
+    padding:4px 0;
+  }
+  .table-row strong{
     font-size:12px;
   }
-  .stat-label{
-    display:flex;
-    align-items:center;
-    gap:6px;
+  .muted{
     color:var(--text-sub);
+    font-size:11px;
   }
-  .stat-bar-wrap{
-    background:rgba(15,23,42,0.9);
+  .warn{
+    color:#f97373;
+    font-size:12px;
+  }
+  select{
     border-radius:999px;
-    overflow:hidden;
-    border:1px solid rgba(30,64,175,0.7);
-    height:16px;
-  }
-  .stat-bar{
-    height:100%;
-    background:linear-gradient(90deg,#22d3ee,#a855f7);
-    width:0%;
-    transition:width .3s ease-out;
-  }
-  .stat-text{
-    font-size:10px;
-    text-align:right;
-    color:var(--text-sub);
-    margin-top:2px;
-  }
-
-  .history-list::-webkit-scrollbar{width:4px;}
-  .history-list::-webkit-scrollbar-thumb{
-    background:#1f2937;
-    border-radius:999px;
-  }
-
-  @keyframes fadeDown{
-    from{opacity:0;transform:translateY(-12px);}
-    to{opacity:1;transform:translateY(0);}
-  }
-  @keyframes shake{
-    0%{transform:translate(0,0) rotate(0);}
-    15%{transform:translate(-6px,-1px) rotate(-2deg);}
-    30%{transform:translate(6px,1px) rotate(2deg);}
-    45%{transform:translate(-5px,0) rotate(-1.5deg);}
-    60%{transform:translate(4px,1px) rotate(1.5deg);}
-    75%{transform:translate(-3px,-1px) rotate(-1deg);}
-    100%{transform:translate(0,0) rotate(0);}
-  }
-
-  @media (max-width:640px){
-    .bowl{width:220px;height:220px;}
-    .bowl-base{inset:34px 20px 10px;}
-    .bowl-lid{inset:6px 24px auto;height:110px;}
+    border:1px solid var(--border-soft);
+    background:#020617;
+    color:var(--text-main);
+    padding:4px 10px;
+    font-size:12px;
+    max-width:100%;
   }
 </style>
 </head>
 <body>
-
 <header>
-  <h1>น้ำเต้าปูปลา PHANToM</h1>
-  <p>ฝาปิด–เปิด + เขย่า 3 วินาที • มีทั้งค่า Global และค่าเฉพาะโต๊ะ (override) จาก Firebase</p>
+  <h1>PHANToM Namtao – Admin</h1>
+  <p>ปรับเปอร์เซ็นออกผลทั้งแบบ Global และแบบเฉพาะโต๊ะ (per-table override) • ต้องล็อกอิน Google ก่อน</p>
 </header>
 
 <div class="wrapper">
-  <div class="tabs">
-    <button class="tab-btn active" data-target="play-panel">
-      <span class="icon">🎲</span> โต๊ะหลัก
-    </button>
-    <button class="tab-btn" data-target="history-panel">
-      <span class="icon">📈</span> ประวัติ & สถิติ
-    </button>
+  <div class="card">
+    <h2>เข้าสู่ระบบ</h2>
+    <p>ใช้ Gmail ใดก็ได้ • ใครมีลิงก์หน้านี้ + ล็อกอินสำเร็จ = แก้ config ได้</p>
+    <div class="login-box">
+      <button class="btn" id="login-btn">🔑 Login ด้วย Google</button>
+      <button class="btn btn-outline" id="logout-btn" style="display:none;">🚪 Logout</button>
+      <div id="login-info" class="muted" style="margin-top:8px;">
+        ยังไม่ได้เข้าสู่ระบบ
+      </div>
+    </div>
   </div>
 
-  <!-- โต๊ะหลัก -->
-  <section id="play-panel" class="panel active">
-    <div class="card">
-      <div class="top-row">
-        <div class="bowl-wrap">
-          <div class="bowl bowl--open" id="bowl">
-            <div class="bowl-base">
-              <div class="dice-row">
-                <div class="dice-strip">
-                  <div class="die">
-                    <div class="die-emoji" id="die1-emoji">🐟</div>
-                    <div class="die-label" id="die1-label">ปลา</div>
-                  </div>
-                  <div class="die">
-                    <div class="die-emoji" id="die2-emoji">🦀</div>
-                    <div class="die-label" id="die2-label">ปู</div>
-                  </div>
-                  <div class="die">
-                    <div class="die-emoji" id="die3-emoji">🦐</div>
-                    <div class="die-label" id="die3-label">กุ้ง</div>
-                  </div>
-                </div>
-                <span class="info-chip" id="round-info">ยังไม่เคยทอย</span>
-              </div>
-            </div>
-            <div class="bowl-lid"></div>
-          </div>
+  <!-- Global default -->
+  <div id="global-section" class="card" style="display:none;">
+    <h2>Global default – ใช้กับทุกโต๊ะที่ไม่ได้ตั้งค่าเอง</h2>
+    <p>doc: <code>config/globalGame</code> • ถ้าโต๊ะไม่มี override ของตัวเอง จะใช้ค่านี้</p>
+    <div class="tag">ใช้เป็นค่าเริ่มต้นของทุกโต๊ะ</div>
+
+    <div class="two-col" style="margin-top:10px;">
+      <div class="half">
+        <div class="input-row">
+          <label>🐟 ปลา</label>
+          <input type="number" id="g-fish" min="0" value="100">
         </div>
-
-        <div class="control-panel">
-          <h2>สุ่มจาก Global หรือค่าเฉพาะโต๊ะนี้</h2>
-          <p>
-            ถ้า admin ตั้งค่าเฉพาะโต๊ะ → โต๊ะนี้จะใช้ค่าของตัวเอง<br>
-            ถ้าไม่ตั้ง → ใช้ Global default จาก config/globalGame
-          </p>
-
-          <button class="btn-main" id="shake-btn">
-            <span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>
-          </button>
-
-          <div class="small-text" id="mode-text">
-            ระบบกำลังโหลดค่าเปอร์เซ็นจาก Firebase...
-          </div>
-
-          <div class="last-result" id="last-result">
-            ยังไม่มีประวัติการทอย เริ่มสุ่มครั้งแรกได้เลย
-          </div>
-
-          <div class="tags">
-            <div class="tag">3 ลูกเต๋า</div>
-            <div class="tag">ประวัติ 100 ครั้งล่าสุด</div>
-            <div class="tag">สถิติ realtime</div>
-          </div>
+        <div class="input-row">
+          <label>🦀 ปู</label>
+          <input type="number" id="g-crab" min="0" value="100">
+        </div>
+        <div class="input-row">
+          <label>🦐 กุ้ง</label>
+          <input type="number" id="g-shrimp" min="0" value="100">
+        </div>
+      </div>
+      <div class="half">
+        <div class="input-row">
+          <label>🐢 เต่า</label>
+          <input type="number" id="g-turtle" min="0" value="100">
+        </div>
+        <div class="input-row">
+          <label>🐔 ไก่</label>
+          <input type="number" id="g-chicken" min="0" value="100">
+        </div>
+        <div class="input-row">
+          <label>🎲 น้ำเต้า</label>
+          <input type="number" id="g-gourd" min="0" value="100">
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ประวัติ & สถิติ -->
-  <section id="history-panel" class="panel">
-    <div class="history-layout">
+    <div style="margin-top:10px;">
+      <button class="btn" id="save-global-btn">💾 บันทึก Global</button>
+      <button class="btn btn-outline" id="perfect-global-btn">🎯 Perfect Random (ทุกหน้าเท่ากัน)</button>
+    </div>
+    <div id="global-status" class="muted" style="margin-top:6px;">
+      กำลังโหลด config จาก Firestore...
+    </div>
+  </div>
 
-      <div class="history-card">
-        <h3>ประวัติการทอย (100 ครั้งล่าสุด)</h3>
-        <p style="margin:0 0 4px;font-size:12px;color:var(--text-sub);">
-          แสดงจากล่าสุด → ย้อนหลัง • หนึ่งบรรทัด = 1 รอบทอย
-        </p>
-        <div class="history-list" id="history-list">
-          <div style="font-size:12px;color:var(--text-sub);margin-top:6px;">
-            ยังไม่มีประวัติ กดทอยที่หน้า “โต๊ะหลัก” ก่อน
-          </div>
+  <!-- Per-table override -->
+  <div id="table-config-section" class="card" style="display:none;">
+    <h2>ตั้งค่าเฉพาะโต๊ะ (Per-table override)</h2>
+    <p>เลือกโต๊ะจากรายการ แล้วปรับเปอร์เซ็นของโต๊ะนั้นได้โดยไม่กระทบโต๊ะอื่น</p>
+
+    <div style="margin-bottom:8px;">
+      <span class="muted">เลือกโต๊ะ:</span>
+      <select id="table-select">
+        <option value="">— เลือกโต๊ะ —</option>
+      </select>
+    </div>
+
+    <div id="table-meta" class="muted" style="margin-bottom:8px;">
+      ยังไม่ได้เลือกโต๊ะ
+    </div>
+
+    <div class="two-col">
+      <div class="half">
+        <div class="input-row">
+          <label>🐟 ปลา</label>
+          <input type="number" id="t-fish" min="0" value="100" disabled>
+        </div>
+        <div class="input-row">
+          <label>🦀 ปู</label>
+          <input type="number" id="t-crab" min="0" value="100" disabled>
+        </div>
+        <div class="input-row">
+          <label>🦐 กุ้ง</label>
+          <input type="number" id="t-shrimp" min="0" value="100" disabled>
         </div>
       </div>
-
-      <div class="stats-card">
-        <h3>สถิติการออกหน้า (รวมทุกหน้าลูกเต๋า)</h3>
-        <p style="margin:0 0 4px;font-size:12px;color:var(--text-sub);">
-          คิดจากผลรวมทุกช่องลูกเต๋า จากประวัติในฝั่งซ้าย (สูงสุด 100 รอบ = 300 ช่อง)
-        </p>
-        <div class="stats-grid" id="stats-grid"></div>
+      <div class="half">
+        <div class="input-row">
+          <label>🐢 เต่า</label>
+          <input type="number" id="t-turtle" min="0" value="100" disabled>
+        </div>
+        <div class="input-row">
+          <label>🐔 ไก่</label>
+          <input type="number" id="t-chicken" min="0" value="100" disabled>
+        </div>
+        <div class="input-row">
+          <label>🎲 น้ำเต้า</label>
+          <input type="number" id="t-gourd" min="0" value="100" disabled>
+        </div>
       </div>
-
     </div>
-  </section>
-</div>
 
-<!-- Overlay Login -->
-<div id="login-overlay" style="
-  position:fixed;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(2,6,23,0.95);z-index:9999;flex-direction:column;text-align:center;
-">
-  <h2 style="color:#e5e7eb;margin-bottom:10px;">ล็อกอินด้วย Google ก่อนเริ่มใช้งาน</h2>
-  <p style="color:#9ca3af;font-size:13px;margin:0 0 14px;">
-    ใช้ Gmail ใดก็ได้ • ใช้ Firebase เก็บ config และสถิติของโต๊ะนี้
-  </p>
-  <button id="google-login-btn" style="
-    padding:10px 18px;border-radius:999px;border:0;
-    background:linear-gradient(135deg,#22d3ee,#a855f7);
-    color:#020617;font-weight:600;cursor:pointer;
-    box-shadow:0 0 18px rgba(34,211,238,0.7);font-size:14px;
-  ">
-    🔑 Sign in with Google
-  </button>
+    <div style="margin-top:10px;">
+      <button class="btn" id="save-table-btn" disabled>💾 บันทึกเฉพาะโต๊ะนี้</button>
+      <button class="btn btn-outline" id="perfect-table-btn" disabled>🎯 Perfect Random โต๊ะนี้</button>
+      <button class="btn btn-outline" id="use-global-btn" disabled>↩ ใช้ Global default</button>
+    </div>
+    <div id="table-status" class="muted" style="margin-top:6px;">
+      เลือกโต๊ะก่อนเพื่อเริ่มแก้ไข
+    </div>
+  </div>
+
+  <!-- รายการโต๊ะ -->
+  <div id="tables-section" class="card" style="display:none;">
+    <h2>โต๊ะที่เปิดเล่นอยู่ (ล่าสุด 50 โต๊ะ)</h2>
+    <p>อ่านจาก collection <code>tables</code> • ดูสถานะ active/idle + มี override หรือไม่</p>
+    <div class="table-list" id="table-list">
+      <div class="muted">กำลังโหลดข้อมูลโต๊ะ...</div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -502,17 +302,22 @@
     getAuth,
     GoogleAuthProvider,
     signInWithPopup,
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
   } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
   import {
     getFirestore,
     doc,
     setDoc,
     onSnapshot,
+    collection,
+    query,
+    orderBy,
+    limit,
     serverTimestamp
   } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js';
 
-  // 👉 ใส่ config โปรเจกต์ Firebase ของคุณตรงนี้
+  // 👉 ใช้ config เดียวกับ index.html
   const firebaseConfig = {
   apiKey: "AIzaSyBpxF7PVDhULJcA6LbOe8YtVmpqo77R0GQ",
   authDomain: "phantom-namtao.firebaseapp.com",
@@ -526,420 +331,373 @@
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);
-
   const provider = new GoogleAuthProvider();
 
-  const SHAKE_DURATION_MS = 3000;
-  const LID_CLOSE_MS      = 400;
+  const loginBtn      = document.getElementById("login-btn");
+  const logoutBtn     = document.getElementById("logout-btn");
+  const loginInfo     = document.getElementById("login-info");
+  const globalSection = document.getElementById("global-section");
+  const tableCfgSection = document.getElementById("table-config-section");
+  const tablesSection = document.getElementById("tables-section");
 
-  const animals = [
-    { key:"ปลา",    emoji:"🐟" },
-    { key:"ปู",     emoji:"🦀" },
-    { key:"กุ้ง",    emoji:"🦐" },
-    { key:"เต่า",   emoji:"🐢" },
-    { key:"ไก่",    emoji:"🐔" },
-    { key:"น้ำเต้า", emoji:"🎲" }
-  ];
+  // Global inputs
+  const gFish    = document.getElementById("g-fish");
+  const gCrab    = document.getElementById("g-crab");
+  const gShrimp  = document.getElementById("g-shrimp");
+  const gTurtle  = document.getElementById("g-turtle");
+  const gChicken = document.getElementById("g-chicken");
+  const gGourd   = document.getElementById("g-gourd");
+  const saveGlobalBtn   = document.getElementById("save-global-btn");
+  const perfectGlobalBtn= document.getElementById("perfect-global-btn");
+  const globalStatus    = document.getElementById("global-status");
 
-  const defaultWeights = {
+  // Per-table inputs
+  const tableSelect   = document.getElementById("table-select");
+  const tableMeta     = document.getElementById("table-meta");
+  const tFish         = document.getElementById("t-fish");
+  const tCrab         = document.getElementById("t-crab");
+  const tShrimp       = document.getElementById("t-shrimp");
+  const tTurtle       = document.getElementById("t-turtle");
+  const tChicken      = document.getElementById("t-chicken");
+  const tGourd        = document.getElementById("t-gourd");
+  const saveTableBtn  = document.getElementById("save-table-btn");
+  const perfectTableBtn = document.getElementById("perfect-table-btn");
+  const useGlobalBtn  = document.getElementById("use-global-btn");
+  const tableStatus   = document.getElementById("table-status");
+
+  const tableList     = document.getElementById("table-list");
+
+  const globalDocRef = doc(db,"config","globalGame");
+
+  let currentUser   = null;
+  let globalWeightsCache = {
     "ปลา":100,"ปู":100,"กุ้ง":100,"เต่า":100,"ไก่":100,"น้ำเต้า":100
   };
 
-  // global vs per-table
-  let globalWeights          = { ...defaultWeights };
-  let tableOverrideWeights   = null;
-  let useTableOverride       = false;
-  let effectiveWeights       = { ...defaultWeights };
+  let tablesCache = {};   // tableId -> data
+  let currentTableId = null;
 
-  const bowlEl       = document.getElementById("bowl");
-  const shakeBtn     = document.getElementById("shake-btn");
-  const roundInfo    = document.getElementById("round-info");
-  const lastResultEl = document.getElementById("last-result");
-  const historyList  = document.getElementById("history-list");
-  const statsGrid    = document.getElementById("stats-grid");
-  const modeText     = document.getElementById("mode-text");
-  const loginOverlay = document.getElementById("login-overlay");
-  const loginBtn     = document.getElementById("google-login-btn");
-
-  const diceEmojiEls = [
-    document.getElementById("die1-emoji"),
-    document.getElementById("die2-emoji"),
-    document.getElementById("die3-emoji")
-  ];
-  const diceLabelEls = [
-    document.getElementById("die1-label"),
-    document.getElementById("die2-label"),
-    document.getElementById("die3-label")
-  ];
-
-  let roundCount = 0;
-  let history    = [];
-  let currentUser = null;
-
-  // Tabs
-  document.querySelectorAll(".tab-btn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.target).classList.add("active");
-    });
-  });
-
-  // tableId ผูกกับเครื่อง
-  let tableId = localStorage.getItem("phantom_namtao_table_id");
-  if(!tableId){
-    tableId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("table_" + Date.now());
-    localStorage.setItem("phantom_namtao_table_id", tableId);
-  }
-  const tableDocRef  = doc(db, "tables", tableId);
-  const globalDocRef = doc(db, "config", "globalGame");
-
-  function renderDice(faces){
-    faces.forEach((a,idx)=>{
-      diceEmojiEls[idx].textContent = a.emoji;
-      diceLabelEls[idx].textContent = a.key;
-    });
+  function setLoggedOutUI(){
+    loginInfo.textContent   = "ยังไม่ได้เข้าสู่ระบบ";
+    logoutBtn.style.display = "none";
+    globalSection.style.display = "none";
+    tableCfgSection.style.display = "none";
+    tablesSection.style.display   = "none";
   }
 
-  function renderHistory(){
-    if(history.length === 0){
-      historyList.innerHTML = `<div style="font-size:12px;color:#9ca3af;margin-top:6px;">
-        ยังไม่มีประวัติ กดทอยที่หน้า “โต๊ะหลัก” ก่อน
-      </div>`;
-      return;
-    }
-    historyList.innerHTML = "";
-    history.forEach(item=>{
-      const row = document.createElement("div");
-      row.className = "history-row";
-
-      const left = document.createElement("div");
-      left.className = "history-left";
-
-      const roundPill = document.createElement("div");
-      roundPill.className = "pill";
-      roundPill.textContent = `#${item.round}`;
-
-      const emojiStrip = document.createElement("div");
-      emojiStrip.className = "emoji-strip";
-      item.faces.forEach(a=>{
-        const span = document.createElement("span");
-        span.textContent = a.emoji;
-        emojiStrip.appendChild(span);
-      });
-
-      left.appendChild(roundPill);
-      left.appendChild(emojiStrip);
-
-      const timeSpan = document.createElement("div");
-      timeSpan.style.fontSize = "11px";
-      timeSpan.style.color    = "#9ca3af";
-      timeSpan.textContent    = item.time;
-
-      row.appendChild(left);
-      row.appendChild(timeSpan);
-      historyList.appendChild(row);
-    });
+  function setLoggedInUI(user){
+    loginInfo.textContent = `ล็อกอินเป็น: ${user.email || user.uid}`;
+    logoutBtn.style.display = "inline-flex";
+    globalSection.style.display = "block";
+    tableCfgSection.style.display = "block";
+    tablesSection.style.display   = "block";
   }
 
-  function renderStats(){
-    statsGrid.innerHTML = "";
-    if(history.length === 0){
-      statsGrid.innerHTML = `<div style="grid-column:1 / -1;font-size:12px;color:#9ca3af;margin-top:6px;">
-        ยังไม่มีข้อมูล กรุณาทอยอย่างน้อย 1 ครั้ง
-      </div>`;
-      return;
-    }
-
-    const counts = {};
-    animals.forEach(a=>counts[a.key]=0);
-
-    history.forEach(item=>{
-      item.faces.forEach(a=>{ counts[a.key]++; });
-    });
-
-    const totalFaces = history.length * 3;
-
-    animals.forEach(a=>{
-      const count = counts[a.key];
-      const pct   = totalFaces>0 ? (count/totalFaces)*100 : 0;
-
-      const labelDiv = document.createElement("div");
-      labelDiv.className = "stat-label";
-      labelDiv.innerHTML = `<span>${a.emoji}</span><span>${a.key}</span>`;
-
-      const barWrap = document.createElement("div");
-      barWrap.className = "stat-bar-wrap";
-      const bar = document.createElement("div");
-      bar.className = "stat-bar";
-      bar.style.width = pct.toFixed(1) + "%";
-      barWrap.appendChild(bar);
-
-      statsGrid.appendChild(labelDiv);
-      statsGrid.appendChild(barWrap);
-
-      const text = document.createElement("div");
-      text.className = "stat-text";
-      text.textContent = `${count} ครั้ง • ${pct.toFixed(1)}%`;
-      statsGrid.appendChild(document.createElement("div"));
-      statsGrid.appendChild(text);
-    });
-  }
-
-  function recomputeEffectiveWeights(){
-    const src = (useTableOverride && tableOverrideWeights)
-      ? tableOverrideWeights
-      : globalWeights;
-
-    const merged = {...defaultWeights};
-    animals.forEach(a=>{
-      const raw = src[a.key];
-      const v = Number(raw);
-      if(!isNaN(v)){
-        merged[a.key] = v;
-      }
-    });
-    effectiveWeights = merged;
-    updateModeText();
-  }
-
-  function updateModeText(){
-    const srcName = useTableOverride && tableOverrideWeights
-      ? "ค่าเฉพาะโต๊ะนี้ (override)"
-      : "Global default";
-
-    const vals = animals.map(a=>Number(effectiveWeights[a.key] ?? 0));
-    const positive = vals.filter(v=>v>0);
-
-    if(positive.length === 0){
-      modeText.textContent = `โหมด: Fallback – ค่าเปอร์เซ็นไม่ถูกต้อง ใช้ค่าเริ่มต้นเท่ากันทุกหน้า (จาก ${srcName})`;
-      return;
-    }
-
-    const allPos = vals.every(v=>v>0);
-    if(!allPos){
-      modeText.textContent = `โหมด: Bias + Block – บางหน้าอาจไม่ออกเลย (เปอร์เซ็น ≤ 0) • แหล่งค่า: ${srcName}`;
-      return;
-    }
-
-    const first = vals[0];
-    const allEqual = vals.every(v=>v === first);
-    if(allEqual){
-      modeText.textContent = `โหมด: Perfect Random – ทุกหน้ามีโอกาสเท่ากัน • แหล่งค่า: ${srcName}`;
-    }else{
-      modeText.textContent = `โหมด: Bias – แต่ละหน้ามีโอกาสไม่เท่ากัน • แหล่งค่า: ${srcName}`;
-    }
-  }
-
-  function applyGlobalConfig(data){
-    if(!data || !data.weights){
-      globalWeights = {...defaultWeights};
-      recomputeEffectiveWeights();
-      return;
-    }
-    const newW = {...globalWeights};
-    animals.forEach(a=>{
-      const v = Number(data.weights[a.key]);
-      if(!isNaN(v)){
-        newW[a.key] = v;
-      }
-    });
-    globalWeights = newW;
-    recomputeEffectiveWeights();
-  }
-
-  function applyTableConfig(data){
-    if(!data){
-      useTableOverride     = false;
-      tableOverrideWeights = null;
-      recomputeEffectiveWeights();
-      return;
-    }
-
-    const useGlobal = data.tableUseGlobal;
-    const tw        = data.tableWeights;
-
-    if(useGlobal === true || !tw){
-      useTableOverride     = false;
-      tableOverrideWeights = null;
-      recomputeEffectiveWeights();
-      return;
-    }
-
-    const newW = {};
-    animals.forEach(a=>{
-      const v = Number(tw[a.key]);
-      if(!isNaN(v)){
-        newW[a.key] = v;
-      }
-    });
-
-    tableOverrideWeights = newW;
-    useTableOverride     = true;
-    recomputeEffectiveWeights();
-  }
-
-  function pickOneWithWeights(){
-    const keys    = animals.map(a=>a.key);
-    const weights = keys.map(k=>{
-      const v = Number(effectiveWeights[k] ?? 0);
-      return isNaN(v) || v<0 ? 0 : v;
-    });
-
-    let total = weights.reduce((a,b)=>a+b,0);
-    if(total <= 0){
-      total = keys.length;
-      weights.fill(1);
-    }
-
-    let r = Math.random() * total;
-    for(let i=0;i<keys.length;i++){
-      r -= weights[i];
-      if(r <= 0) return animals[i];
-    }
-    return animals[animals.length-1];
-  }
-
-  function randomFaces3(){
-    return [pickOneWithWeights(), pickOneWithWeights(), pickOneWithWeights()];
-  }
-
-  async function recordRollToFirestore(faces){
-    if(!currentUser) return;
-    try{
-      await setDoc(
-        tableDocRef,
-        {
-          lastActivity: serverTimestamp(),
-          lastResultKeys: faces.map(f=>f.key),
-          totalRounds: roundCount,
-          status: "active",
-          ownerUid: currentUser.uid,
-          ownerEmail: currentUser.email || null
-        },
-        { merge:true }
-      );
-    }catch(e){
-      console.error("recordRollToFirestore error:", e);
-    }
-  }
-
-  // Login
   loginBtn.addEventListener("click", async ()=>{
     try{
       await signInWithPopup(auth, provider);
     }catch(e){
-      console.error("Google login error", e);
-      alert("ล็อกอินไม่สำเร็จ ลองอีกครั้ง");
+      console.error("login error:", e);
+      loginInfo.textContent = "เกิดข้อผิดพลาดในการล็อกอิน: " + e.message;
     }
   });
 
-  let firebaseReady = false;
+  logoutBtn.addEventListener("click", async ()=>{
+    try{
+      await signOut(auth);
+    }catch(e){
+      console.error("logout error:", e);
+    }
+  });
 
-  onAuthStateChanged(auth, async (user)=>{
+  onAuthStateChanged(auth, user=>{
     currentUser = user || null;
     if(!user){
-      loginOverlay.style.display = "flex";
+      setLoggedOutUI();
       return;
     }
-    loginOverlay.style.display = "none";
+    setLoggedInUI(user);
+  });
 
-    if(firebaseReady) return;
-    firebaseReady = true;
+  // --- Global config realtime ---
+  onSnapshot(globalDocRef, (snap)=>{
+    if(!snap.exists()){
+      globalStatus.textContent = "ยังไม่มี doc config/globalGame – จะสร้างใหม่เมื่อกดบันทึก";
+      return;
+    }
+    const data    = snap.data();
+    const weights = data.weights || {};
+
+    const safe = (v, def)=> (typeof v === "number" || typeof v === "string") ? v : def;
+
+    gFish.value    = safe(weights["ปลา"],    100);
+    gCrab.value    = safe(weights["ปู"],     100);
+    gShrimp.value  = safe(weights["กุ้ง"],    100);
+    gTurtle.value  = safe(weights["เต่า"],   100);
+    gChicken.value = safe(weights["ไก่"],    100);
+    gGourd.value   = safe(weights["น้ำเต้า"], 100);
+
+    globalWeightsCache = {
+      "ปลา":   Number(gFish.value),
+      "ปู":    Number(gCrab.value),
+      "กุ้ง":   Number(gShrimp.value),
+      "เต่า":  Number(gTurtle.value),
+      "ไก่":   Number(gChicken.value),
+      "น้ำเต้า": Number(gGourd.value)
+    };
+
+    globalStatus.textContent = `อ่าน Global config ล่าสุดแล้ว (อัปเดตโดย: ${data.updatedBy || "ไม่ระบุ"})`;
+  }, (err)=>{
+    console.error("onSnapshot global error:", err);
+    globalStatus.textContent = "อ่าน Global config ไม่ได้: " + err.message;
+  });
+
+  async function saveGlobal(perfect=false){
+    if(!currentUser){
+      alert("กรุณา Login ก่อน");
+      return;
+    }
+    const valOr = (input)=> perfect ? 100 : Number(input.value || 0);
+
+    const payload = {
+      weights:{
+        "ปลา":    valOr(gFish),
+        "ปู":     valOr(gCrab),
+        "กุ้ง":    valOr(gShrimp),
+        "เต่า":   valOr(gTurtle),
+        "ไก่":    valOr(gChicken),
+        "น้ำเต้า": valOr(gGourd)
+      },
+      updatedAt: serverTimestamp(),
+      updatedBy: currentUser.uid
+    };
+
+    saveGlobalBtn.disabled    = true;
+    perfectGlobalBtn.disabled = true;
+    globalStatus.textContent  = "กำลังบันทึก Global config ...";
 
     try{
-      await setDoc(
-        tableDocRef,
-        {
-          createdAt: serverTimestamp(),
-          status: "active",
-          ownerUid: user.uid,
-          ownerEmail: user.email || null,
-          // ถ้าโต๊ะนี้ยังไม่เคยตั้งค่าเลย ให้ใช้ Global เป็น default
-          tableUseGlobal: (typeof (await (await import('https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js')).getDoc?.(tableDocRef)) === "undefined")
-        },
-        { merge:true }
-      );
+      await setDoc(globalDocRef, payload, {merge:true});
+      globalStatus.textContent = perfect
+        ? "บันทึกแล้ว: Global Perfect Random (ทุกหน้าเท่ากัน)"
+        : "บันทึกแล้ว: Global config ถูกอัปเดต";
     }catch(e){
-      console.error("init table doc error:", e);
+      console.error("saveGlobal error:", e);
+      globalStatus.textContent = "บันทึก Global ไม่สำเร็จ: " + e.message;
+    }finally{
+      saveGlobalBtn.disabled    = false;
+      perfectGlobalBtn.disabled = false;
     }
+  }
 
-    // global config
-    onSnapshot(globalDocRef, (snap)=>{
-      if(snap.exists()){
-        applyGlobalConfig(snap.data());
-      }else{
-        globalWeights = {...defaultWeights};
-        recomputeEffectiveWeights();
-      }
-    }, (err)=>{
-      console.error("onSnapshot global config error:", err);
-    });
-
-    // table config
-    onSnapshot(tableDocRef, (snap)=>{
-      if(snap.exists()){
-        applyTableConfig(snap.data());
-      }else{
-        applyTableConfig(null);
-      }
-    }, (err)=>{
-      console.error("onSnapshot table config error:", err);
-    });
+  saveGlobalBtn.addEventListener("click", ()=> saveGlobal(false));
+  perfectGlobalBtn.addEventListener("click", ()=>{
+    [gFish,gCrab,gShrimp,gTurtle,gChicken,gGourd].forEach(inp=>inp.value=100);
+    saveGlobal(true);
   });
 
-  // ปุ่มเขย่า
-  shakeBtn.addEventListener("click", ()=>{
-    if(shakeBtn.disabled) return;
+  // --- Per-table override ---
+  function setTableInputsEnabled(enabled){
+    const inputs = [tFish,tCrab,tShrimp,tTurtle,tChicken,tGourd];
+    inputs.forEach(i=>{ i.disabled = !enabled; });
+    saveTableBtn.disabled   = !enabled;
+    perfectTableBtn.disabled= !enabled;
+    useGlobalBtn.disabled   = !enabled;
+  }
+
+  function loadTableConfigToInputs(tableId){
+    if(!tableId || !tablesCache[tableId]){
+      tableMeta.textContent   = "ยังไม่ได้เลือกโต๊ะ";
+      tableStatus.textContent = "เลือกโต๊ะจาก dropdown ก่อน";
+      setTableInputsEnabled(false);
+      return;
+    }
+    const data = tablesCache[tableId];
+
+    const owner = data.ownerEmail || data.ownerUid || "ไม่ระบุ";
+    const override = data.tableWeights && data.tableUseGlobal === false;
+
+    tableMeta.textContent = `โต๊ะ: ${tableId} • owner: ${owner} • mode: ${override ? "ใช้ค่าเฉพาะโต๊ะ" : "ใช้ Global default"}`;
+
+    // ถ้ามี override → ใช้ค่าจาก tableWeights
+    if(override){
+      const tw = data.tableWeights || {};
+      const safe = (v,def)=> (typeof v==="number"||typeof v==="string")?v:def;
+      tFish.value    = safe(tw["ปลา"],    globalWeightsCache["ปลา"]);
+      tCrab.value    = safe(tw["ปู"],     globalWeightsCache["ปู"]);
+      tShrimp.value  = safe(tw["กุ้ง"],    globalWeightsCache["กุ้ง"]);
+      tTurtle.value  = safe(tw["เต่า"],   globalWeightsCache["เต่า"]);
+      tChicken.value = safe(tw["ไก่"],    globalWeightsCache["ไก่"]);
+      tGourd.value   = safe(tw["น้ำเต้า"], globalWeightsCache["น้ำเต้า"]);
+      tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ค่า override ของตัวเองอยู่";
+    }else{
+      // ไม่มี override → prefill ด้วย Global เพื่อให้แก้ต่อได้เลย
+      tFish.value    = globalWeightsCache["ปลา"];
+      tCrab.value    = globalWeightsCache["ปู"];
+      tShrimp.value  = globalWeightsCache["กุ้ง"];
+      tTurtle.value  = globalWeightsCache["เต่า"];
+      tChicken.value = globalWeightsCache["ไก่"];
+      tGourd.value   = globalWeightsCache["น้ำเต้า"];
+      tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ Global default • หากกดบันทึกจะสร้าง override ใหม่";
+    }
+
+    setTableInputsEnabled(true);
+  }
+
+  async function saveTableOverride(perfect=false){
     if(!currentUser){
-      alert("กรุณา Login ด้วย Google ก่อน");
+      alert("กรุณา Login ก่อน");
+      return;
+    }
+    if(!currentTableId){
+      alert("ยังไม่ได้เลือกโต๊ะ");
+      return;
+    }
+    const valOr = (input)=> perfect ? 100 : Number(input.value || 0);
+
+    const payload = {
+      tableUseGlobal: false,
+      tableWeights: {
+        "ปลา":    valOr(tFish),
+        "ปู":     valOr(tCrab),
+        "กุ้ง":    valOr(tShrimp),
+        "เต่า":   valOr(tTurtle),
+        "ไก่":    valOr(tChicken),
+        "น้ำเต้า": valOr(tGourd)
+      },
+      tableConfigUpdatedAt: serverTimestamp(),
+      tableConfigUpdatedBy: currentUser.uid
+    };
+
+    const ref = doc(db,"tables",currentTableId);
+    saveTableBtn.disabled   = true;
+    perfectTableBtn.disabled= true;
+    useGlobalBtn.disabled   = true;
+    tableStatus.textContent = "กำลังบันทึกค่าเฉพาะโต๊ะนี้...";
+
+    try{
+      await setDoc(ref, payload, {merge:true});
+      tableStatus.textContent = perfect
+        ? "บันทึกแล้ว: โต๊ะนี้เป็น Perfect Random (override)"
+        : "บันทึกแล้ว: โต๊ะนี้มีค่า override ใหม่";
+    }catch(e){
+      console.error("saveTableOverride error:", e);
+      tableStatus.textContent = "บันทึกค่าโต๊ะไม่สำเร็จ: " + e.message;
+    }finally{
+      setTableInputsEnabled(true);
+    }
+  }
+
+  async function useGlobalForTable(){
+    if(!currentUser){
+      alert("กรุณา Login ก่อน");
+      return;
+    }
+    if(!currentTableId){
+      alert("ยังไม่ได้เลือกโต๊ะ");
+      return;
+    }
+    const ref = doc(db,"tables",currentTableId);
+    setTableInputsEnabled(false);
+    tableStatus.textContent = "กำลังตั้งค่าให้โต๊ะนี้กลับไปใช้ Global...";
+
+    try{
+      await setDoc(ref,{
+        tableUseGlobal:true,
+        tableWeights:null,
+        tableConfigUpdatedAt: serverTimestamp(),
+        tableConfigUpdatedBy: currentUser.uid
+      },{merge:true});
+      tableStatus.textContent = "บันทึกแล้ว: โต๊ะนี้จะใช้ Global default";
+    }catch(e){
+      console.error("useGlobalForTable error:", e);
+      tableStatus.textContent = "ตั้งค่ากลับเป็น Global ไม่สำเร็จ: " + e.message;
+    }finally{
+      setTableInputsEnabled(true);
+    }
+  }
+
+  saveTableBtn.addEventListener("click", ()=> saveTableOverride(false));
+  perfectTableBtn.addEventListener("click", ()=> saveTableOverride(true));
+  useGlobalBtn.addEventListener("click", useGlobalForTable);
+
+  tableSelect.addEventListener("change", ()=>{
+    currentTableId = tableSelect.value || null;
+    loadTableConfigToInputs(currentTableId);
+  });
+
+  // --- รายการโต๊ะทั้งหมด (ล่าสุด 50) ---
+  const tablesQuery = query(
+    collection(db,"tables"),
+    orderBy("lastActivity","desc"),
+    limit(50)
+  );
+
+  onSnapshot(tablesQuery, (snap)=>{
+    tablesCache = {};
+    if(snap.empty){
+      tableList.innerHTML = `<div class="muted">ยังไม่มีโต๊ะที่เล่นเลย</div>`;
+      tableSelect.innerHTML = `<option value="">— เลือกโต๊ะ —</option>`;
       return;
     }
 
-    shakeBtn.disabled = true;
-    shakeBtn.innerHTML = `<span>กำลังปิดฝา & เขย่า...</span> <span>🌀</span>`;
+    let listHtml = "";
+    let optsHtml = `<option value="">— เลือกโต๊ะ —</option>`;
+    const now = Date.now();
 
-    bowlEl.classList.add("bowl--closed");
-    bowlEl.classList.remove("bowl--open");
+    snap.forEach(docSnap=>{
+      const id   = docSnap.id;
+      const data = docSnap.data();
+      tablesCache[id] = data;
 
-    setTimeout(()=>{
-      bowlEl.classList.add("bowl--shake");
+      let lastStr = "ไม่ทราบเวลา";
+      let lastMs  = 0;
 
-      const faces = randomFaces3();
+      if(data.lastActivity && data.lastActivity.toDate){
+        const d = data.lastActivity.toDate();
+        lastStr = d.toLocaleString("th-TH");
+        lastMs  = d.getTime();
+      }
 
-      setTimeout(async ()=>{
-        bowlEl.classList.remove("bowl--shake");
-        bowlEl.classList.remove("bowl--closed");
-        bowlEl.classList.add("bowl--open");
+      const rounds = data.totalRounds || 0;
+      const status = data.status || "unknown";
+      const isRecent   = lastMs && ((now - lastMs) < 15*60*1000);
+      const owner      = data.ownerEmail || data.ownerUid || "ไม่ระบุ";
+      const hasOverride= data.tableWeights && data.tableUseGlobal === false;
+      const cfgLabel   = hasOverride ? "🎯 override" : "↩ global";
 
-        renderDice(faces);
+      listHtml += `
+        <div class="table-row">
+          <strong>${id}</strong><br>
+          <span class="muted">
+            lastActivity: ${lastStr} • รอบเล่น: ${rounds} • สถานะ: ${status}
+            ${isRecent ? " • 🟢 active" : " • ⚪ idle"}
+            • owner: ${owner}
+            • config: ${cfgLabel}
+          </span>
+        </div>
+      `;
 
-        roundCount++;
-        const now = new Date();
-        const timeStr = now.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      const label = `${id.substring(0,8)}… • ${cfgLabel} • รอบ ${rounds}`;
+      optsHtml += `<option value="${id}">${label}</option>`;
+    });
 
-        history.unshift({ round: roundCount, faces, time: timeStr });
-        if(history.length > 100) history.pop();
+    tableList.innerHTML   = listHtml;
+    tableSelect.innerHTML = optsHtml;
 
-        roundInfo.textContent = `รอบล่าสุด: #${roundCount}`;
-        lastResultEl.innerHTML = `
-          รอบที่ <b>#${roundCount}</b> เวลา ${timeStr}<br>
-          ผล: ${faces.map(f=>f.emoji + " " + f.key).join(" • ")}
-        `;
-
-        renderHistory();
-        renderStats();
-        await recordRollToFirestore(faces);
-
-        shakeBtn.disabled = false;
-        shakeBtn.innerHTML = `<span>ปิดฝา & เขย่าเดี๋ยวนี้ (3 วินาที)</span> <span>✨</span>`;
-      }, SHAKE_DURATION_MS);
-    }, LID_CLOSE_MS);
+    // ถ้ามีโต๊ะที่เคยเลือกไว้ ก่อน snapshot ล่าสุด → เลือกไว้เหมือนเดิม
+    if(currentTableId && tablesCache[currentTableId]){
+      tableSelect.value = currentTableId;
+      loadTableConfigToInputs(currentTableId);
+    }else{
+      currentTableId = null;
+      loadTableConfigToInputs(null);
+    }
+  }, (err)=>{
+    console.error("tables snapshot error:", err);
+    tableList.innerHTML = `<div class="warn">อ่านรายการโต๊ะไม่สำเร็จ: ${err.message}</div>`;
   });
 
-  renderStats();
-  recomputeEffectiveWeights();
 </script>
 </body>
 </html>
