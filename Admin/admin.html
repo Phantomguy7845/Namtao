@@ -102,28 +102,6 @@
     text-align:center;
     margin-top:12px;
   }
-  .input-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:8px;
-    margin:4px 0;
-    font-size:13px;
-  }
-  .input-row label{
-    display:flex;
-    align-items:center;
-    gap:6px;
-  }
-  .input-row input{
-    width:90px;
-    padding:4px 8px;
-    border-radius:999px;
-    border:1px solid var(--border-soft);
-    background:#020617;
-    color:var(--text-main);
-    font-size:13px;
-  }
   .two-col{
     display:flex;
     flex-wrap:wrap;
@@ -132,18 +110,28 @@
   .half{
     flex:1 1 260px;
   }
-  .table-list{
-    max-height:260px;
-    overflow-y:auto;
-    font-size:12px;
-    margin-top:6px;
+  .input-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:6px 0;
+    font-size:13px;
   }
-  .table-row{
-    border-bottom:1px solid rgba(30,64,175,0.7);
-    padding:4px 0;
+  .input-row label{
+    min-width:70px;
+    display:flex;
+    align-items:center;
+    gap:6px;
   }
-  .table-row strong{
+  .input-row input[type="range"]{
+    flex:1;
+    accent-color:var(--accent);
+  }
+  .range-display{
+    width:46px;
+    text-align:right;
     font-size:12px;
+    color:var(--text-sub);
   }
   .muted{
     color:var(--text-sub);
@@ -162,12 +150,48 @@
     font-size:12px;
     max-width:100%;
   }
+  .table-list{
+    max-height:260px;
+    overflow-y:auto;
+    font-size:12px;
+    margin-top:6px;
+  }
+  .table-row{
+    border-bottom:1px solid rgba(30,64,175,0.7);
+    padding:4px 0;
+  }
+  .table-row strong{
+    font-size:12px;
+  }
+  .filter-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    margin:4px 0 8px;
+    font-size:12px;
+  }
+  .filter-row input[type="text"]{
+    border-radius:999px;
+    border:1px solid var(--border-soft);
+    background:#020617;
+    color:var(--text-main);
+    padding:4px 10px;
+    font-size:12px;
+    min-width:220px;
+  }
+  .filter-row label{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    color:var(--text-sub);
+  }
 </style>
 </head>
 <body>
 <header>
   <h1>PHANToM Namtao – Admin</h1>
-  <p>ปรับเปอร์เซ็นออกผลทั้งแบบ Global และแบบเฉพาะโต๊ะ (per-table override) • ต้องล็อกอิน Google ก่อน</p>
+  <p>ปรับเปอร์เซ็นออกผลทั้งแบบ Global และแบบเฉพาะโต๊ะ • เลือกโต๊ะด้วย Gmail owner + filter active</p>
 </header>
 
 <div class="wrapper">
@@ -193,29 +217,35 @@
       <div class="half">
         <div class="input-row">
           <label>🐟 ปลา</label>
-          <input type="number" id="g-fish" min="0" value="100">
+          <input type="range" id="g-fish" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-fish-val">100</span>
         </div>
         <div class="input-row">
           <label>🦀 ปู</label>
-          <input type="number" id="g-crab" min="0" value="100">
+          <input type="range" id="g-crab" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-crab-val">100</span>
         </div>
         <div class="input-row">
           <label>🦐 กุ้ง</label>
-          <input type="number" id="g-shrimp" min="0" value="100">
+          <input type="range" id="g-shrimp" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-shrimp-val">100</span>
         </div>
       </div>
       <div class="half">
         <div class="input-row">
           <label>🐢 เต่า</label>
-          <input type="number" id="g-turtle" min="0" value="100">
+          <input type="range" id="g-turtle" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-turtle-val">100</span>
         </div>
         <div class="input-row">
           <label>🐔 ไก่</label>
-          <input type="number" id="g-chicken" min="0" value="100">
+          <input type="range" id="g-chicken" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-chicken-val">100</span>
         </div>
         <div class="input-row">
           <label>🎲 น้ำเต้า</label>
-          <input type="number" id="g-gourd" min="0" value="100">
+          <input type="range" id="g-gourd" min="0" max="200" step="1" value="100">
+          <span class="range-display" id="g-gourd-val">100</span>
         </div>
       </div>
     </div>
@@ -234,11 +264,18 @@
     <h2>ตั้งค่าเฉพาะโต๊ะ (Per-table override)</h2>
     <p>เลือกโต๊ะจากรายการ แล้วปรับเปอร์เซ็นของโต๊ะนั้นได้โดยไม่กระทบโต๊ะอื่น</p>
 
-    <div style="margin-bottom:8px;">
+    <div class="filter-row">
       <span class="muted">เลือกโต๊ะ:</span>
       <select id="table-select">
         <option value="">— เลือกโต๊ะ —</option>
       </select>
+
+      <input type="text" id="owner-filter" placeholder="ค้นหาจาก Gmail owner เช่น name@gmail.com" />
+
+      <label>
+        <input type="checkbox" id="active-only" />
+        แสดงเฉพาะโต๊ะที่ active อยู่
+      </label>
     </div>
 
     <div id="table-meta" class="muted" style="margin-bottom:8px;">
@@ -249,29 +286,35 @@
       <div class="half">
         <div class="input-row">
           <label>🐟 ปลา</label>
-          <input type="number" id="t-fish" min="0" value="100" disabled>
+          <input type="range" id="t-fish" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-fish-val">100</span>
         </div>
         <div class="input-row">
           <label>🦀 ปู</label>
-          <input type="number" id="t-crab" min="0" value="100" disabled>
+          <input type="range" id="t-crab" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-crab-val">100</span>
         </div>
         <div class="input-row">
           <label>🦐 กุ้ง</label>
-          <input type="number" id="t-shrimp" min="0" value="100" disabled>
+          <input type="range" id="t-shrimp" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-shrimp-val">100</span>
         </div>
       </div>
       <div class="half">
         <div class="input-row">
           <label>🐢 เต่า</label>
-          <input type="number" id="t-turtle" min="0" value="100" disabled>
+          <input type="range" id="t-turtle" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-turtle-val">100</span>
         </div>
         <div class="input-row">
           <label>🐔 ไก่</label>
-          <input type="number" id="t-chicken" min="0" value="100" disabled>
+          <input type="range" id="t-chicken" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-chicken-val">100</span>
         </div>
         <div class="input-row">
           <label>🎲 น้ำเต้า</label>
-          <input type="number" id="t-gourd" min="0" value="100" disabled>
+          <input type="range" id="t-gourd" min="0" max="200" step="1" value="100" disabled>
+          <span class="range-display" id="t-gourd-val">100</span>
         </div>
       </div>
     </div>
@@ -289,7 +332,15 @@
   <!-- รายการโต๊ะ -->
   <div id="tables-section" class="card" style="display:none;">
     <h2>โต๊ะที่เปิดเล่นอยู่ (ล่าสุด 50 โต๊ะ)</h2>
-    <p>อ่านจาก collection <code>tables</code> • ดูสถานะ active/idle + มี override หรือไม่</p>
+    <p>อ่านจาก collection <code>tables</code> • ใช้ filter ด้านบนเพื่อหาโต๊ะที่ต้องการ</p>
+    <div class="filter-row">
+      <span class="muted">Filter ซ้ำอีกครั้ง (ใช้กับรายการด้านล่างด้วย):</span>
+      <input type="text" id="owner-filter-list" placeholder="ค้นหาจาก Gmail owner" />
+      <label>
+        <input type="checkbox" id="active-only-list" />
+        เฉพาะ active
+      </label>
+    </div>
     <div class="table-list" id="table-list">
       <div class="muted">กำลังโหลดข้อมูลโต๊ะ...</div>
     </div>
@@ -347,25 +398,45 @@
   const gTurtle  = document.getElementById("g-turtle");
   const gChicken = document.getElementById("g-chicken");
   const gGourd   = document.getElementById("g-gourd");
-  const saveGlobalBtn   = document.getElementById("save-global-btn");
-  const perfectGlobalBtn= document.getElementById("perfect-global-btn");
-  const globalStatus    = document.getElementById("global-status");
+  const gFishVal    = document.getElementById("g-fish-val");
+  const gCrabVal    = document.getElementById("g-crab-val");
+  const gShrimpVal  = document.getElementById("g-shrimp-val");
+  const gTurtleVal  = document.getElementById("g-turtle-val");
+  const gChickenVal = document.getElementById("g-chicken-val");
+  const gGourdVal   = document.getElementById("g-gourd-val");
+
+  const saveGlobalBtn    = document.getElementById("save-global-btn");
+  const perfectGlobalBtn = document.getElementById("perfect-global-btn");
+  const globalStatus     = document.getElementById("global-status");
 
   // Per-table inputs
   const tableSelect   = document.getElementById("table-select");
-  const tableMeta     = document.getElementById("table-meta");
-  const tFish         = document.getElementById("t-fish");
-  const tCrab         = document.getElementById("t-crab");
-  const tShrimp       = document.getElementById("t-shrimp");
-  const tTurtle       = document.getElementById("t-turtle");
-  const tChicken      = document.getElementById("t-chicken");
-  const tGourd        = document.getElementById("t-gourd");
-  const saveTableBtn  = document.getElementById("save-table-btn");
-  const perfectTableBtn = document.getElementById("perfect-table-btn");
-  const useGlobalBtn  = document.getElementById("use-global-btn");
-  const tableStatus   = document.getElementById("table-status");
+  const ownerFilter   = document.getElementById("owner-filter");
+  const activeOnlyChk = document.getElementById("active-only");
 
-  const tableList     = document.getElementById("table-list");
+  const tFish   = document.getElementById("t-fish");
+  const tCrab   = document.getElementById("t-crab");
+  const tShrimp = document.getElementById("t-shrimp");
+  const tTurtle = document.getElementById("t-turtle");
+  const tChicken= document.getElementById("t-chicken");
+  const tGourd  = document.getElementById("t-gourd");
+  const tFishVal   = document.getElementById("t-fish-val");
+  const tCrabVal   = document.getElementById("t-crab-val");
+  const tShrimpVal = document.getElementById("t-shrimp-val");
+  const tTurtleVal = document.getElementById("t-turtle-val");
+  const tChickenVal= document.getElementById("t-chicken-val");
+  const tGourdVal  = document.getElementById("t-gourd-val");
+
+  const saveTableBtn    = document.getElementById("save-table-btn");
+  const perfectTableBtn = document.getElementById("perfect-table-btn");
+  const useGlobalBtn    = document.getElementById("use-global-btn");
+  const tableStatus     = document.getElementById("table-status");
+  const tableMeta       = document.getElementById("table-meta");
+
+  // Table list filter
+  const ownerFilterList = document.getElementById("owner-filter-list");
+  const activeOnlyList  = document.getElementById("active-only-list");
+  const tableList       = document.getElementById("table-list");
 
   const globalDocRef = doc(db,"config","globalGame");
 
@@ -374,7 +445,8 @@
     "ปลา":100,"ปู":100,"กุ้ง":100,"เต่า":100,"ไก่":100,"น้ำเต้า":100
   };
 
-  let tablesCache = {};   // tableId -> data
+  let tablesArray   = []; // [{id,data,lastMs,isRecent,owner,rounds,status,hasOverride}]
+  let tablesCache   = {}; // id -> data
   let currentTableId = null;
 
   function setLoggedOutUI(){
@@ -419,6 +491,19 @@
     setLoggedInUI(user);
   });
 
+  // Utility: range display binding
+  function bindRangeWithDisplay(inputEl, displayEl){
+    const refresh = ()=>{ displayEl.textContent = inputEl.value; };
+    inputEl.addEventListener("input", refresh);
+    refresh();
+  }
+
+  [ [gFish,gFishVal], [gCrab,gCrabVal], [gShrimp,gShrimpVal],
+    [gTurtle,gTurtleVal], [gChicken,gChickenVal], [gGourd,gGourdVal],
+    [tFish,tFishVal], [tCrab,tCrabVal], [tShrimp,tShrimpVal],
+    [tTurtle,tTurtleVal], [tChicken,tChickenVal], [tGourd,tGourdVal]
+  ].forEach(([i,d])=> bindRangeWithDisplay(i,d));
+
   // --- Global config realtime ---
   onSnapshot(globalDocRef, (snap)=>{
     if(!snap.exists()){
@@ -436,6 +521,10 @@
     gTurtle.value  = safe(weights["เต่า"],   100);
     gChicken.value = safe(weights["ไก่"],    100);
     gGourd.value   = safe(weights["น้ำเต้า"], 100);
+
+    [ [gFish,gFishVal], [gCrab,gCrabVal], [gShrimp,gShrimpVal],
+      [gTurtle,gTurtleVal], [gChicken,gChickenVal], [gGourd,gGourdVal]
+    ].forEach(([i,d])=>{ d.textContent = i.value; });
 
     globalWeightsCache = {
       "ปลา":   Number(gFish.value),
@@ -493,6 +582,9 @@
   saveGlobalBtn.addEventListener("click", ()=> saveGlobal(false));
   perfectGlobalBtn.addEventListener("click", ()=>{
     [gFish,gCrab,gShrimp,gTurtle,gChicken,gGourd].forEach(inp=>inp.value=100);
+    [ [gFish,gFishVal], [gCrab,gCrabVal], [gShrimp,gShrimpVal],
+      [gTurtle,gTurtleVal], [gChicken,gChickenVal], [gGourd,gGourdVal]
+    ].forEach(([i,d])=>{ d.textContent = i.value; });
     saveGlobal(true);
   });
 
@@ -500,9 +592,9 @@
   function setTableInputsEnabled(enabled){
     const inputs = [tFish,tCrab,tShrimp,tTurtle,tChicken,tGourd];
     inputs.forEach(i=>{ i.disabled = !enabled; });
-    saveTableBtn.disabled   = !enabled;
-    perfectTableBtn.disabled= !enabled;
-    useGlobalBtn.disabled   = !enabled;
+    saveTableBtn.disabled    = !enabled;
+    perfectTableBtn.disabled = !enabled;
+    useGlobalBtn.disabled    = !enabled;
   }
 
   function loadTableConfigToInputs(tableId){
@@ -519,7 +611,6 @@
 
     tableMeta.textContent = `โต๊ะ: ${tableId} • owner: ${owner} • mode: ${override ? "ใช้ค่าเฉพาะโต๊ะ" : "ใช้ Global default"}`;
 
-    // ถ้ามี override → ใช้ค่าจาก tableWeights
     if(override){
       const tw = data.tableWeights || {};
       const safe = (v,def)=> (typeof v==="number"||typeof v==="string")?v:def;
@@ -531,7 +622,6 @@
       tGourd.value   = safe(tw["น้ำเต้า"], globalWeightsCache["น้ำเต้า"]);
       tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ค่า override ของตัวเองอยู่";
     }else{
-      // ไม่มี override → prefill ด้วย Global เพื่อให้แก้ต่อได้เลย
       tFish.value    = globalWeightsCache["ปลา"];
       tCrab.value    = globalWeightsCache["ปู"];
       tShrimp.value  = globalWeightsCache["กุ้ง"];
@@ -540,6 +630,10 @@
       tGourd.value   = globalWeightsCache["น้ำเต้า"];
       tableStatus.textContent = "ตอนนี้โต๊ะนี้ใช้ Global default • หากกดบันทึกจะสร้าง override ใหม่";
     }
+
+    [ [tFish,tFishVal],[tCrab,tCrabVal],[tShrimp,tShrimpVal],
+      [tTurtle,tTurtleVal],[tChicken,tChickenVal],[tGourd,tGourdVal]
+    ].forEach(([i,d])=>{ d.textContent = i.value; });
 
     setTableInputsEnabled(true);
   }
@@ -570,9 +664,7 @@
     };
 
     const ref = doc(db,"tables",currentTableId);
-    saveTableBtn.disabled   = true;
-    perfectTableBtn.disabled= true;
-    useGlobalBtn.disabled   = true;
+    setTableInputsEnabled(false);
     tableStatus.textContent = "กำลังบันทึกค่าเฉพาะโต๊ะนี้...";
 
     try{
@@ -618,13 +710,85 @@
   }
 
   saveTableBtn.addEventListener("click", ()=> saveTableOverride(false));
-  perfectTableBtn.addEventListener("click", ()=> saveTableOverride(true));
+  perfectTableBtn.addEventListener("click", ()=>{
+    [tFish,tCrab,tShrimp,tTurtle,tChicken,tGourd].forEach(inp=>inp.value=100);
+    [ [tFish,tFishVal],[tCrab,tCrabVal],[tShrimp,tShrimpVal],
+      [tTurtle,tTurtleVal],[tChicken,tChickenVal],[tGourd,tGourdVal]
+    ].forEach(([i,d])=>{ d.textContent = i.value; });
+    saveTableOverride(true);
+  });
   useGlobalBtn.addEventListener("click", useGlobalForTable);
 
   tableSelect.addEventListener("change", ()=>{
     currentTableId = tableSelect.value || null;
     loadTableConfigToInputs(currentTableId);
   });
+
+  // --- Filter & render tables (ใช้ร่วมกันทั้ง dropdown และ list) ---
+  function applyFiltersAndRender(){
+    const now = Date.now();
+    const ownerFilterText   = (ownerFilter.value || "").toLowerCase();
+    const ownerFilterListTx = (ownerFilterList.value || "").toLowerCase();
+    const ownerFilterMerged = (ownerFilterText || ownerFilterListTx);
+    const activeOnlyMain    = activeOnlyChk.checked;
+    const activeOnlyListVal = activeOnlyList.checked;
+
+    let filtered = tablesArray.slice();
+
+    if(ownerFilterMerged){
+      filtered = filtered.filter(t => {
+        const email = (t.owner || "").toLowerCase();
+        return email.includes(ownerFilterMerged);
+      });
+    }
+
+    if(activeOnlyMain || activeOnlyListVal){
+      filtered = filtered.filter(t => t.isRecent);
+    }
+
+    // render dropdown
+    let optsHtml = `<option value="">— เลือกโต๊ะ —</option>`;
+    filtered.forEach(t=>{
+      const label = `${t.id.substring(0,8)}… • ${t.configLabel} • รอบ ${t.rounds}`;
+      optsHtml += `<option value="${t.id}">${label}</option>`;
+    });
+    tableSelect.innerHTML = optsHtml;
+
+    if(currentTableId && filtered.some(t=>t.id===currentTableId)){
+      tableSelect.value = currentTableId;
+    }else{
+      currentTableId = "";
+      loadTableConfigToInputs(null);
+    }
+
+    // render list
+    if(filtered.length === 0){
+      tableList.innerHTML = `<div class="muted">ไม่พบโต๊ะตามเงื่อนไขที่เลือก</div>`;
+      return;
+    }
+
+    let listHtml = "";
+    filtered.forEach(t=>{
+      const statusEmoji = t.isRecent ? "🟢 active" : "⚪ idle";
+      listHtml += `
+        <div class="table-row">
+          <strong>${t.id}</strong><br>
+          <span class="muted">
+            lastActivity: ${t.lastStr} • รอบเล่น: ${t.rounds} • สถานะ: ${t.status}
+            • ${statusEmoji}
+            • owner: ${t.owner}
+            • config: ${t.configLabel}
+          </span>
+        </div>
+      `;
+    });
+    tableList.innerHTML = listHtml;
+  }
+
+  ownerFilter.addEventListener("input", applyFiltersAndRender);
+  activeOnlyChk.addEventListener("change", applyFiltersAndRender);
+  ownerFilterList.addEventListener("input", applyFiltersAndRender);
+  activeOnlyList.addEventListener("change", applyFiltersAndRender);
 
   // --- รายการโต๊ะทั้งหมด (ล่าสุด 50) ---
   const tablesQuery = query(
@@ -634,15 +798,15 @@
   );
 
   onSnapshot(tablesQuery, (snap)=>{
+    tablesArray = [];
     tablesCache = {};
+
     if(snap.empty){
       tableList.innerHTML = `<div class="muted">ยังไม่มีโต๊ะที่เล่นเลย</div>`;
       tableSelect.innerHTML = `<option value="">— เลือกโต๊ะ —</option>`;
       return;
     }
 
-    let listHtml = "";
-    let optsHtml = `<option value="">— เลือกโต๊ะ —</option>`;
     const now = Date.now();
 
     snap.forEach(docSnap=>{
@@ -659,40 +823,28 @@
         lastMs  = d.getTime();
       }
 
-      const rounds = data.totalRounds || 0;
-      const status = data.status || "unknown";
+      const rounds  = data.totalRounds || 0;
+      const status  = data.status || "unknown";
       const isRecent   = lastMs && ((now - lastMs) < 15*60*1000);
       const owner      = data.ownerEmail || data.ownerUid || "ไม่ระบุ";
       const hasOverride= data.tableWeights && data.tableUseGlobal === false;
-      const cfgLabel   = hasOverride ? "🎯 override" : "↩ global";
+      const configLabel= hasOverride ? "🎯 override" : "↩ global";
 
-      listHtml += `
-        <div class="table-row">
-          <strong>${id}</strong><br>
-          <span class="muted">
-            lastActivity: ${lastStr} • รอบเล่น: ${rounds} • สถานะ: ${status}
-            ${isRecent ? " • 🟢 active" : " • ⚪ idle"}
-            • owner: ${owner}
-            • config: ${cfgLabel}
-          </span>
-        </div>
-      `;
-
-      const label = `${id.substring(0,8)}… • ${cfgLabel} • รอบ ${rounds}`;
-      optsHtml += `<option value="${id}">${label}</option>`;
+      tablesArray.push({
+        id,
+        data,
+        lastStr,
+        lastMs,
+        isRecent,
+        rounds,
+        status,
+        owner,
+        hasOverride,
+        configLabel
+      });
     });
 
-    tableList.innerHTML   = listHtml;
-    tableSelect.innerHTML = optsHtml;
-
-    // ถ้ามีโต๊ะที่เคยเลือกไว้ ก่อน snapshot ล่าสุด → เลือกไว้เหมือนเดิม
-    if(currentTableId && tablesCache[currentTableId]){
-      tableSelect.value = currentTableId;
-      loadTableConfigToInputs(currentTableId);
-    }else{
-      currentTableId = null;
-      loadTableConfigToInputs(null);
-    }
+    applyFiltersAndRender();
   }, (err)=>{
     console.error("tables snapshot error:", err);
     tableList.innerHTML = `<div class="warn">อ่านรายการโต๊ะไม่สำเร็จ: ${err.message}</div>`;
