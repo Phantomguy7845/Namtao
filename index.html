@@ -520,6 +520,9 @@
   </button>
 </div>
 
+<!-- 🔊 เสียงเขย่า -->
+<audio id="shake-sound" src="shake.mp3" preload="auto"></audio>
+
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js';
   import {
@@ -555,6 +558,25 @@
   const SHAKE_DURATION_MS = 3000;
   const LID_CLOSE_MS      = 400;
   const RANDOM_INTERVAL_MS= 100;
+
+  // 🔊 ควบคุมเสียงเขย่า
+  const shakeSound = document.getElementById("shake-sound");
+
+  function playShakeSound(){
+    if(!shakeSound) return;
+    shakeSound.currentTime = 0;
+    shakeSound.loop = true;
+    shakeSound.volume = 0.9; // ปรับดัง/เบาได้ 0.0 - 1.0
+    const p = shakeSound.play();
+    if(p && p.catch) p.catch(()=>{});
+  }
+
+  function stopShakeSound(){
+    if(!shakeSound) return;
+    shakeSound.pause();
+    shakeSound.currentTime = 0;
+    shakeSound.loop = false;
+  }
 
   const animals = [
     { key:"ปลา",    emoji:"🐟" },
@@ -955,10 +977,15 @@
       // หน่วงให้เห็นอนิเมปิดฝา แล้วเริ่มเขย่า
       setTimeout(()=>{
         bowlEl.classList.add("bowl--shake");
+        // 🔊 เริ่มเล่นเสียงตอนฝาเริ่มเขย่า
+        playShakeSound();
 
         // เขย่า 3 วิ แล้วหยุด แต่ฝายังปิดอยู่ และยังสุ่มต่อเนื่อง
         setTimeout(()=>{
           bowlEl.classList.remove("bowl--shake");
+          // 🔇 หยุดเสียงเมื่อจบการเขย่า
+          stopShakeSound();
+
           shakeBtn.disabled = false;
           shakeBtn.innerHTML = `<span>เปิดฝา & โชว์ผลลัพทันที</span> <span>👁️</span>`;
         }, SHAKE_DURATION_MS);
@@ -970,6 +997,9 @@
     // จังหวะที่ 2: เปิดฝา + โชว์ผล + บันทึกประวัติ
     if(gamePhase === "closed_randomizing"){
       gamePhase = "idle";
+
+      // เผื่อไว้: ถ้ายังมีเสียงอยู่ให้หยุดเลย
+      stopShakeSound();
 
       shakeBtn.disabled = true;
       shakeBtn.innerHTML = `<span>กำลังเปิดฝา...</span> <span>✨</span>`;
